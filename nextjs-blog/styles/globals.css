@@ -18,5 +18,20 @@ background: rgb(9, 7, 31);
   @apply text-white
 }
 .icon {
-  @apply h-6 w-6 text-gray-400
+  @apply h-6 w-6 text-gray-400 
+}
+.connectBtn {
+  @apply bg-[#0f3b6d] w-full flex justify-center items-center rounded-2xl text-[#0d80fd] text-xl font-medium cursor-pointer h-14 hover:bg-[#1d4c81]
+}
+
+.headerConnect {
+  @apply text-lg font-normal text-[#0d7ffb] hover:text-[#174c93] cursor-pointer pr-2 border-r border-[#0d7ffb]
+}
+
+.headerConnectDiv {
+  @apply flex items-center bg-[#10315b] p-2 rounded-full
+}
+
+.headerConnectDiv2 {
+  @apply flex bg-slate-900 p-2 rounded-full
 }

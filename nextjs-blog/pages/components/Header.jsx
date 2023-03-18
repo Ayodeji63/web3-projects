@@ -7,8 +7,27 @@ import {
     ChevronDownIcon,
     ChevronRightIcon,
 } from "@heroicons/react/24/solid"
-
+import {
+    useAccount,
+    useConnect,
+    useDisconnect,
+    useEnsName,
+    useNetwork,
+} from "wagmi"
+import { InjectedConnector } from "wagmi/connectors/injected"
+import { truncate } from "truncate-ethereum-address"
+import Link from "next/link"
+import { useRouter } from "next/router"
 const Header = () => {
+    const { address, isConnected } = useAccount()
+    const { data: ensName } = useEnsName({ address })
+    const { chain, chains } = useNetwork()
+    const { disconnect } = useDisconnect()
+    const { connect } = useConnect({
+        connector: new InjectedConnector(),
+    })
+
+    const router = useRouter()
     return (
         <div className="p-4 flex items-center justify-between">
             <div className="flex items-center">
@@ -22,10 +41,14 @@ const Header = () => {
                 {/* links Div  */}
 
                 <ul className="flex flex-grow justify-around">
-                    <li className="li current">Swap</li>
+                    <li className="li">
+                        <Link href={"/"}>Swap</Link>
+                    </li>
                     <li className="li">Tokens</li>
                     <li className="li">NFTs</li>
-                    <li className="li">Pool</li>
+                    <li className="li">
+                        <Link href={"/Token"}>Pool</Link>
+                    </li>
                 </ul>
             </div>
 
@@ -53,15 +76,38 @@ const Header = () => {
                         className="mr-2"
                     />
                     <h1 className="text-base text-white font-medium mr-1">
-                        Ethereum
+                        {isConnected ? chain.name : "Ethereum"}
                     </h1>
                     <ChevronDownIcon className="h-4 w-4 text-gray-300" />
                 </div>
 
-                <div className="flex items-center bg-[#10315b] p-2 rounded-full">
-                    <h1 className="text-lg font-normal text-[#0d7ffb] hover:text-[#174c93] cursor-pointer pr-2 border-r border-[#0d7ffb]">
-                        Connect
-                    </h1>
+                <div
+                    className={
+                        isConnected ? "headerConnectDiv2" : "headerConnectDiv"
+                    }
+                >
+                    {isConnected ? (
+                        <div className="flex items-center">
+                            <div
+                                className="rounded-full overflow-hidden h-7 w-7 mr-2 cursor-pointer"
+                                onClick={() => disconnect()}
+                            >
+                                <Image
+                                    src={"/acct.webp"}
+                                    height={40}
+                                    width={40}
+                                    className="h-full object-cover"
+                                />
+                            </div>
+                            <p className="text-white text-base font-medium">
+                                {truncate(ensName ?? address)}
+                            </p>
+                        </div>
+                    ) : (
+                        <h1 className="headerConnect" onClick={() => connect()}>
+                            Connect
+                        </h1>
+                    )}
                     <ChevronDownIcon className="h-6 w-6 text-[#0d7ffb] ml-2 cursor-pointer" />
                 </div>
             </div>

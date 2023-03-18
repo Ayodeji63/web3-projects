@@ -10,10 +10,13 @@
     "@emotion/styled": "^11.10.6",
     "@heroicons/react": "^2.0.16",
     "@mui/material": "^5.11.13",
+    "ethers": "^5",
     "heroicons": "^2.0.16",
     "next": "latest",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "truncate-ethereum-address": "^0.3.0",
+    "wagmi": "^0.12.2"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.14",
