@@ -31,5 +31,14 @@ describe("Exchange", () => {
                 CRYPTO_DEV_TOKEN_CONTRACT_ADDRESS
             )
         })
+
+        it("Should get Reserve", async () => {
+            const { exchange, owner } = await loadFixture(runEveryTime)
+            const amount = await exchange.getReserve()
+            // console.log(`${amount}`)
+            // expect(await exchange.getReserve()).to.be.equal(
+            //     ethers.utils.parseEther("0")
+            // )
+        })
     })
 })
