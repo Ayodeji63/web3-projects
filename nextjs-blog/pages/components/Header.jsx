@@ -1,5 +1,5 @@
 import Image from "next/image"
-import React from "react"
+import React, { useContext } from "react"
 import {
     MagnifyingGlassIcon,
     AdjustmentsVerticalIcon,
@@ -18,14 +18,16 @@ import { InjectedConnector } from "wagmi/connectors/injected"
 import { truncate } from "truncate-ethereum-address"
 import Link from "next/link"
 import { useRouter } from "next/router"
+import { HookContext } from "../../context/hook"
 const Header = () => {
-    const { address, isConnected } = useAccount()
-    const { data: ensName } = useEnsName({ address })
-    const { chain, chains } = useNetwork()
-    const { disconnect } = useDisconnect()
-    const { connect } = useConnect({
-        connector: new InjectedConnector(),
-    })
+    // const { address, isConnected } = useAccount()
+    // const { data: ensName } = useEnsName({ address })
+    // const { chain, chains } = useNetwork()
+    // const { disconnect } = useDisconnect()
+    // const { connect } = useConnect({
+    //     connector: new InjectedConnector(),
+    // })
+    const { connectWallet, address, disConnectWallet } = useContext(HookContext)
 
     const router = useRouter()
     return (
@@ -47,7 +49,7 @@ const Header = () => {
                     <li className="li">Tokens</li>
                     <li className="li">NFTs</li>
                     <li className="li">
-                        <Link href={"/Token"}>Pool</Link>
+                        <Link href={"/Pool"}>Pool</Link>
                     </li>
                 </ul>
             </div>
@@ -76,21 +78,22 @@ const Header = () => {
                         className="mr-2"
                     />
                     <h1 className="text-base text-white font-medium mr-1">
-                        {isConnected ? chain.name : "Ethereum"}
+                        {/* {isConnected ? chain.name : "Ethereum"} */}
+                        Ethereum
                     </h1>
                     <ChevronDownIcon className="h-4 w-4 text-gray-300" />
                 </div>
 
                 <div
                     className={
-                        isConnected ? "headerConnectDiv2" : "headerConnectDiv"
+                        address ? "headerConnectDiv2" : "headerConnectDiv"
                     }
                 >
-                    {isConnected ? (
-                        <div className="flex items-center">
+                    {address ? (
+                        <div className="flex items-center cursor-pointer">
                             <div
                                 className="rounded-full overflow-hidden h-7 w-7 mr-2 cursor-pointer"
-                                onClick={() => disconnect()}
+                                onClick={disConnectWallet}
                             >
                                 <Image
                                     src={"/acct.webp"}
@@ -100,14 +103,15 @@ const Header = () => {
                                 />
                             </div>
                             <p className="text-white text-base font-medium">
-                                {truncate(ensName ?? address)}
+                                {truncate(address)}
                             </p>
                         </div>
                     ) : (
-                        <h1 className="headerConnect" onClick={() => connect()}>
+                        <h1 className="headerConnect" onClick={connectWallet}>
                             Connect
                         </h1>
                     )}
+
                     <ChevronDownIcon className="h-6 w-6 text-[#0d7ffb] ml-2 cursor-pointer" />
                 </div>
             </div>

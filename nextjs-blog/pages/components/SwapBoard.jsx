@@ -1,36 +1,34 @@
 import { Cog8ToothIcon } from "@heroicons/react/24/outline"
 import { ArrowDownIcon, ChevronDownIcon } from "@heroicons/react/24/solid"
+import { BigNumber, ethers } from "ethers"
 import Image from "next/image"
-import React, { useState } from "react"
+import React, { useContext, useState } from "react"
 import { useAccount, useBalance, useConnect, useEnsName } from "wagmi"
 import { InjectedConnector } from "wagmi/connectors/injected"
+import { HookContext } from "../../context/hook"
 import Input from "./Input"
 
 const SwapBoard = () => {
-    const { connect } = useConnect({
-        connector: new InjectedConnector(),
-    })
-    const { address, isConnected } = useAccount()
-    const { data: ensName } = useEnsName({ address })
-    const { data, isError, isLoading } = useBalance({ address })
     const [changeToken, setChangeToken] = useState(false)
+    const { ethBalance, cdBalance, connectWallet, walletConnected } =
+        useContext(HookContext)
 
     const tokens = [
         {
             name: "ETH",
             src: "/ethre.webp",
-            token: "",
+            token: ethBalance,
         },
         {
             name: "CDT",
             src: "/learn.jpg",
-            token: "0x7F311a52734fF9604Dd3CCBa1C5666598165a7C6",
+            token: cdBalance,
         },
     ]
 
     return (
-        <div className="w-full h-full mt-20 flex justify-center mr-auto ">
-            <div className="w-[30%] h-fit bg-[#0b111c] rounded-2xl border border-[#1c2231] shadow-xl p-4 relative">
+        <div className="section">
+            <div className="w-[30%] wrapper">
                 {/* first div  */}
                 <div className="flex w-full justify-between items-center">
                     <h1 className="text-lg text-white font-medium">Swap</h1>
@@ -43,8 +41,8 @@ const SwapBoard = () => {
                     <Input param={!changeToken ? tokens[1] : tokens[0]} />
                 </div>
                 {/* last div: connect button  */}
-                <div className="connectBtn mt-3" onClick={() => connect()}>
-                    {isConnected ? "Select Token" : "Connect Wallet"}
+                <div className="connectBtn mt-3" onClick={connectWallet}>
+                    {walletConnected ? "Select Token" : "Connect Wallet"}
                 </div>
 
                 {/* overflow: button  */}

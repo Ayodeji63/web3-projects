@@ -1,29 +1,15 @@
 import "../styles/globals.css"
-import {
-    WagmiConfig,
-    createClient,
-    configureChains,
-    mainnet,
-    goerli,
-    sepolia,
-} from "wagmi"
+import { WagmiConfig, createClient, configureChains, goerli } from "wagmi"
+
+import { avalanche, bsc, mainnet, sepolia } from "wagmi/chains"
 import { publicProvider } from "wagmi/providers/public"
+import { HookProvider } from "../context/hook"
 
-const { chains, provider, webSocketProvider } = configureChains(
-    [goerli],
-    [publicProvider()]
-)
-
-const client = createClient({
-    autoConnect: true,
-    provider,
-    webSocketProvider,
-})
 function MyApp({ Component, pageProps }) {
     return (
-        <WagmiConfig client={client}>
+        <HookProvider>
             <Component {...pageProps} />
-        </WagmiConfig>
+        </HookProvider>
     )
 }
 

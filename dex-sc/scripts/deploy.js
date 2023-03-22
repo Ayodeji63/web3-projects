@@ -8,9 +8,9 @@ const hre = require("hardhat")
 
 async function main() {
     const CRYPTO_DEV_TOKEN_CONTRACT_ADDRESS =
-        "0x7F311a52734fF9604Dd3CCBa1C5666598165a7C6"
+        "0x3E5789040ce4b7B4a35e8f7CDE28CaF55A1c4E8e"
     const Ex = await hre.ethers.getContractFactory("Exchange")
-    const ex = await Ex.deploy(CRYPTO_DEV_TOKEN_CONTRACT_ADDRESS)
+    const ex = await Ex.deploy("0x3E5789040ce4b7B4a35e8f7CDE28CaF55A1c4E8e")
 
     await ex.deployed()
 

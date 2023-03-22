@@ -35,3 +35,14 @@ background: rgb(9, 7, 31);
 .headerConnectDiv2 {
   @apply flex bg-slate-900 p-2 rounded-full
 }
+
+.section {
+  @apply w-full h-full mt-20 flex justify-center mr-auto 
+}
+
+.wrapper {
+  @apply h-fit bg-[#0b111c] rounded-2xl border border-[#1c2231] shadow-xl p-5 relative
+}
+.position {
+  @apply flex bg-blue-500 overflow-hidden items-center px-2 py-1 h-fit text-white rounded-xl cursor-pointer hover:bg-blue-600
+}

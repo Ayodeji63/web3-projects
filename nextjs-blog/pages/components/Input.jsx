@@ -1,23 +1,37 @@
+import { BigNumber, ethers, utils } from "ethers"
 import Image from "next/image"
-import React, { useState } from "react"
+import React, { useContext, useState } from "react"
 import { useAccount, useBalance } from "wagmi"
+import { HookContext } from "../../context/hook"
+import { calaculateCD } from "../../utils/addLiquidity"
 
 const Input = ({ param }) => {
-    console.log(param)
-    const { address, isConnected } = useAccount()
-    const { data } = useBalance({
-        address,
-        token: param.token || "",
-    })
-    const [value, setValue] = useState(0)
+    const { value, setValue } = param
+    const zero = BigNumber.from(0)
+    const { walletConnected, reserveCD, etherBalanceContract } =
+        useContext(HookContext)
+    const [token, setToken] = useState(zero)
+    const handleChange = async (e) => {
+        if (!param.setCdTokens) {
+            setValue(e.target.value)
+        } else {
+            setValue(e.target.value || "0")
+            const _addCDtokens = await calaculateCD(
+                e.target.value || "0",
+                etherBalanceContract,
+                reserveCD
+            )
+            param.setCdTokens(_addCDtokens)
+        }
+    }
     return (
         <div className="h-24 w-full bg-[#101a2a] shadow-xl rounded-xl p-3 mb-1">
             <div className="h-[70%] flex justify-between items-center">
                 <input
                     text={"number"}
                     placeholder="0"
-                    value={value}
-                    onChange={(e) => setValue(e.target.value)}
+                    value={param.value}
+                    onChange={(e) => handleChange(e)}
                     className="h-full w-full  outline-none 
                                 bg-transparent focus:outline-none border-none text-3xl text-white"
                 />
@@ -38,19 +52,24 @@ const Input = ({ param }) => {
             <div className="flex justify-between">
                 <h1></h1>
 
-                {data && (
+                {walletConnected && param.token && (
                     <p>
-                        Balance: {data?.formatted.substring(0, 5)}{" "}
-                        <span
-                            className="text-blue-500 cursor-pointer"
-                            onClick={() =>
-                                setValue(
-                                    data?.formatted.substring(0, 14) + "..."
-                                )
-                            }
-                        >
-                            Max
-                        </span>
+                        Balance:{" "}
+                        {ethers.utils.formatEther(param.token).substring(0, 5)}{" "}
+                        {setValue && (
+                            <span
+                                className="text-blue-500 cursor-pointer"
+                                onClick={() =>
+                                    setValue(
+                                        ethers.utils
+                                            .formatEther(param.token)
+                                            .substring(0, 10)
+                                    )
+                                }
+                            >
+                                Max
+                            </span>
+                        )}
                     </p>
                 )}
             </div>
