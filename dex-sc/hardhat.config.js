@@ -9,11 +9,7 @@ module.exports = {
     solidity: "0.8.18",
     networks: {
         sepolia: {
-            url: G_URL,
-            accounts: [PRIVATE_KEY],
-        },
-        goerli: {
-            url: G_URL,
+            url: RPC_URL,
             accounts: [PRIVATE_KEY],
         },
     },

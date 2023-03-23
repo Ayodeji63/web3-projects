@@ -10,18 +10,20 @@ const Input = ({ param }) => {
     const zero = BigNumber.from(0)
     const { walletConnected, reserveCD, etherBalanceContract } =
         useContext(HookContext)
-    const [token, setToken] = useState(zero)
     const handleChange = async (e) => {
-        if (!param.setCdTokens) {
-            setValue(e.target.value)
-        } else {
-            setValue(e.target.value || "0")
-            const _addCDtokens = await calaculateCD(
-                e.target.value || "0",
-                etherBalanceContract,
-                reserveCD
-            )
-            param.setCdTokens(_addCDtokens)
+        if (setValue) {
+            if (!param.setCdTokens) {
+                setValue(e.target.value)
+            } else {
+                setValue(e.target.value || "0")
+                const _addCDtokens = await calaculateCD(
+                    e.target.value || "0",
+                    etherBalanceContract,
+                    reserveCD
+                )
+                console.log(utils.formatEther(_addCDtokens))
+                param.setCdTokens(utils.formatEther(_addCDtokens))
+            }
         }
     }
     return (

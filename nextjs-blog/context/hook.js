@@ -41,7 +41,7 @@ export const HookProvider = ({ children }) => {
         const { chainId } = await web3Provider.getNetwork()
         if (chainId !== 11155111) {
             alert("Change the network to Sepolia")
-            throw new Error("Change network to Goerli")
+            throw new Error("Change network to Sepolia")
         }
         if (needSigner) {
             const signer = web3Provider.getSigner()
@@ -66,13 +66,12 @@ export const HookProvider = ({ children }) => {
             const provider = await getProviderOrSigner(false)
             const signer = await getProviderOrSigner(true)
             const address = await signer.getAddress()
-            console.log(address)
             const _ethBalance = await getEtherBalance(provider, address)
-            console.log(_ethBalance)
+            console.log(utils.formatEther(_ethBalance))
             const _cdBalance = await getCDTokensBalance(provider, address)
-            console.log(_cdBalance)
+            console.log(utils.formatEther(_cdBalance))
             const _lpBalance = await getLPTokensBalance(provider, address)
-            console.log(_lpBalance)
+            console.log(utils.formatEther(_lpBalance))
             const _reservedCD = await getReserveOfCDTokens(provider)
             console.log(_reservedCD)
             const _ethBalanceContract = await getEtherBalance(
@@ -81,11 +80,10 @@ export const HookProvider = ({ children }) => {
                 true
             )
 
-            console.log(ethers.utils.formatEther(_ethBalanceContract))
-            console.log(utils.formatEther(_reservedCD))
-            console.log(utils.formatEther(_lpBalance))
-            console.log(utils.formatEther(_cdBalance))
-            // console.log();
+            // console.log(ethers.utils.formatEther(_ethBalanceContract))
+            // console.log(utils.formatEther(_reservedCD))
+            // console.log(utils.formatEther(_lpBalance))
+            // console.log(utils.formatEther(_cdBalance))
             setCdBalance(_cdBalance)
             setEthBalance(_ethBalance)
             setLpBalance(_lpBalance)
@@ -126,6 +124,7 @@ export const HookProvider = ({ children }) => {
                 getProviderOrSigner,
                 reserveCD,
                 etherBalanceContract,
+                lpBalance,
             }}
         >
             {children}

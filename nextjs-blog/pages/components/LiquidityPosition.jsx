@@ -1,12 +1,68 @@
-import React, { useContext } from "react"
+import React, { useContext, useState } from "react"
 import {
     ChevronDownIcon,
     PlusIcon,
     WalletIcon,
 } from "@heroicons/react/24/outline"
-import { HookContext, HookProvider } from "../../context/hook"
+import { HookContext, HookProvider, lpBalance } from "../../context/hook"
+import { BigNumber, ethers, utils } from "ethers"
+import {
+    getTokensAfterRemove,
+    removeLiquidity,
+} from "../../utils/removeLiquidity"
+import { getEtherBalance, getReserveOfCDTokens } from "../../utils/getAmounts"
 const LiquidityPosition = () => {
-    const { addLiquidity, setAddLiquidity } = useContext(HookContext)
+    const { addLiquidity, setAddLiquidity, lpBalance, provider, getAmounts } =
+        useContext(HookContext)
+    const zero = BigNumber.from(0)
+    const [removeLPTokens, setRemoveLPTokens] = useState("0")
+    const [removeCD, setRemoveCD] = useState(zero)
+    const [removeEther, setRemoveEther] = useState(zero)
+    const [removeDiv, setRemoveDiv] = useState(false)
+
+    const _removeLiquidity = async () => {
+        try {
+            if (lpBalance > removeLPTokens) {
+                const signer = await provider.getSigner()
+                const removeLPTokensWei = utils.parseEther(removeLPTokens)
+                await removeLiquidity(signer, removeLPTokensWei)
+                await getAmounts()
+                setRemoveCD(zero)
+                setRemoveEther(zero)
+            }
+        } catch (e) {
+            console.error(e)
+            alert("You dont have enough LP Tokens")
+
+            setRemoveCD(zero)
+            setRemoveEther(zero)
+        }
+    }
+
+    /**
+     * _getTokensAfterRemove: Calculates the amount of `Ether` and `CD` tokens
+     * that would be returned back to user after he removes `removeLPTokenWei` amount
+     * of LP tokens from the contract
+     */
+
+    const _getTokensAfterRemove = async (_removeLPTokens) => {
+        try {
+            const removeLPTokensWei = utils.parseEther(_removeLPTokens)
+            const _ethBalance = await getEtherBalance(provider, null, true)
+            const cryptoDevTokenReserve = await getReserveOfCDTokens(provider)
+
+            const { _removeEther, _removeCD } = await getTokensAfterRemove(
+                provider,
+                removeLPTokensWei,
+                _ethBalance,
+                cryptoDevTokenReserve
+            )
+            setRemoveEther(_removeEther)
+            setRemoveCD(_removeCD)
+        } catch (e) {
+            console.error(e)
+        }
+    }
     return (
         <div className="w-full h-full mt-20 flex flex-col items-center">
             <div className=" flex justify-between h-fit w-[50%] md:[70%]">
@@ -29,9 +85,59 @@ const LiquidityPosition = () => {
 
             <div className="wrapper w-[50%] mt-7 flex flex-col justify-center items-center">
                 <WalletIcon className="h-12 w-12 text-white" />
-                <h1 className="text-center text-white">
-                    Your active V1 Liquidity Position <br /> will appear here
-                </h1>
+                {!lpBalance ? (
+                    <h1 className="text-center text-white">
+                        Your active V1 Liquidity Position <br /> will appear
+                        here
+                    </h1>
+                ) : (
+                    <>
+                        <h1 className="text-center text-2xl">
+                            You have: {ethers.utils.formatEther(lpBalance)} LP
+                            Tokens
+                        </h1>
+                        {!removeDiv ? (
+                            <div
+                                className="connectBtn mt-3"
+                                onClick={() => setRemoveDiv(true)}
+                            >
+                                Remove Tokens
+                            </div>
+                        ) : (
+                            <div>
+                                <input
+                                    type={"number"}
+                                    value={removeLPTokens}
+                                    placeholder="Amount of LP tokens"
+                                    onChange={async (e) => {
+                                        setRemoveLPTokens(e.target.value || "0")
+                                        await _getTokensAfterRemove(
+                                            e.target.value || "0"
+                                        )
+                                    }}
+                                    className=" w-full outline-none border-2 border-[#291328] bg-transparent rounded-md p-2 my-5
+                                    focus:outline-none shadow-inner text-3xl text-white"
+                                />
+                                <div>
+                                    <p className="text-xl text-white">
+                                        {`You will get ${utils.formatEther(
+                                            removeCD
+                                        )} Crypto Dev Tokens`}{" "}
+                                    </p>
+                                    <p className="text-xl text-white">{`You will get ${utils.formatEther(
+                                        removeEther
+                                    )} Eth`}</p>
+                                </div>
+                                <div
+                                    className="connectBtn mt-3"
+                                    onClick={_removeLiquidity}
+                                >
+                                    Remove Tokens
+                                </div>
+                            </div>
+                        )}
+                    </>
+                )}
             </div>
         </div>
     )

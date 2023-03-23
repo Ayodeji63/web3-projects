@@ -25,13 +25,12 @@ const AddLiquidity = () => {
         try {
             // console.log(addCDTokens.eq(zero))
             const addEtherWei = utils.parseEther(addEther.toString())
-            const addTokenCDT = utils.parseEther(addEther.toString())
+            const addTokenCDT = utils.parseEther(addCDTokens.toString())
             console.log(addEtherWei)
-            console.log(addCDTokens)
+            console.log(addTokenCDT)
 
             if (addTokenCDT && addEther) {
                 const signer = await provider.getSigner()
-                console.log(addCDTokens)
                 await _AddLiquidity(signer, addTokenCDT, addEtherWei)
                 await getAmounts()
                 setAddCDTokens(zero)
