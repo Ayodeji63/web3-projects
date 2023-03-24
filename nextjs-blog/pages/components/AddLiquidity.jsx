@@ -85,6 +85,7 @@ const AddLiquidity = () => {
             src: "/learn.jpg",
             token: cdBalance,
             value: addCDTokens,
+            setValue: "",
         },
     ]
     console.log(addCDTokens)
