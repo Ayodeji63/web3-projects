@@ -5,6 +5,7 @@ import { _AddLiquidity } from "../../utils/addLiquidity"
 import { HookContext } from "../../context/hook"
 import Input from "./Input"
 import { BigNumber, utils } from "ethers"
+import { ClipLoader } from "react-spinners"
 
 const AddLiquidity = () => {
     const {
@@ -19,6 +20,8 @@ const AddLiquidity = () => {
     const zero = BigNumber.from(0)
     const [addCDTokens, setAddCDTokens] = useState(zero)
     const [addEther, setAddEther] = useState(zero)
+    const [loading, setLoading] = useState(false)
+    const [color, setColor] = useState("#fff")
 
     // console.log(addCDTokens.eq(zero))
     const _addLiquidity = async () => {
@@ -26,25 +29,29 @@ const AddLiquidity = () => {
             // console.log(addCDTokens.eq(zero))
             const addEtherWei = utils.parseEther(addEther.toString())
             const addTokenCDT = utils.parseEther(addCDTokens.toString())
-            console.log(addEtherWei)
-            console.log(addTokenCDT)
+            console.log(addEtherWei.eq(zero))
+            console.log(addTokenCDT.eq(zero))
 
-            if (addTokenCDT && addEther) {
+            if (addTokenCDT != zero && addEther != zero) {
+                setLoading(true)
                 const signer = await provider.getSigner()
                 await _AddLiquidity(signer, addTokenCDT, addEtherWei)
                 await getAmounts()
                 setAddCDTokens(zero)
                 setAddEther(zero)
+                setLoading(false)
             } else {
                 alert("Add Token Amount")
                 setAddCDTokens(zero)
                 setAddEther(zero)
+                setLoading(false)
             }
         } catch (e) {
             console.error(e)
             alert("Add Token Amount")
             setAddCDTokens(zero)
             setAddEther(zero)
+            setLoading(false)
         }
     }
 
@@ -80,6 +87,7 @@ const AddLiquidity = () => {
             value: addCDTokens,
         },
     ]
+    console.log(addCDTokens)
     return (
         <div className="section">
             <div className="wrapper w-[50%] text-white">
@@ -116,7 +124,17 @@ const AddLiquidity = () => {
                             className="connectBtn mt-3"
                             onClick={_addLiquidity}
                         >
-                            Add Tokens
+                            {!loading ? (
+                                "Add Tokens"
+                            ) : (
+                                <ClipLoader
+                                    color={color}
+                                    loading={loading}
+                                    size={30}
+                                    aria-label="Loading Spinner"
+                                    data-testid="loader"
+                                />
+                            )}
                         </div>
                     </div>
                 </div>

@@ -5,26 +5,15 @@ import { useAccount, useBalance } from "wagmi"
 import { HookContext } from "../../context/hook"
 import { calaculateCD } from "../../utils/addLiquidity"
 
-const Input = ({ param }) => {
+const Swap = ({ param }) => {
     const { value, setValue } = param
+    console.log(value)
     const zero = BigNumber.from(0)
     const { walletConnected, reserveCD, etherBalanceContract } =
         useContext(HookContext)
     const handleChange = async (e) => {
-        if (setValue) {
-            if (!param.setCdTokens) {
-                setValue(e.target.value)
-            } else {
-                setValue(e.target.value || "0")
-                const _addCDtokens = await calaculateCD(
-                    e.target.value || "0",
-                    etherBalanceContract,
-                    reserveCD
-                )
-                console.log(utils.formatEther(_addCDtokens).substring(0, 5))
-                param.setCdTokens(utils.formatEther(_addCDtokens))
-            }
-        }
+        setValue(e.target.value)
+        await param.getAmt(e.target.value || "0")
     }
     return (
         <div className="h-24 w-full bg-[#101a2a] shadow-xl rounded-xl p-3 mb-1">
@@ -79,4 +68,4 @@ const Input = ({ param }) => {
     )
 }
 
-export default Input
+export default Swap

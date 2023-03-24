@@ -28,10 +28,12 @@ export const _AddLiquidity = async (
             addCDAmountWei.toString()
         )
         await tx.wait()
+        console.log(utils.formatEther(addCDAmountWei))
+
         const add = await exchangeContract.addLiquidity(addCDAmountWei, {
             value: addEtherAmountWei,
         })
-        await add.wait(1)
+        await add.wait()
     } catch (e) {
         console.error(e)
     }

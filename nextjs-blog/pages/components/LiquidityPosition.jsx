@@ -11,10 +11,13 @@ import {
     removeLiquidity,
 } from "../../utils/removeLiquidity"
 import { getEtherBalance, getReserveOfCDTokens } from "../../utils/getAmounts"
+import { ClipLoader } from "react-spinners"
 const LiquidityPosition = () => {
     const { addLiquidity, setAddLiquidity, lpBalance, provider, getAmounts } =
         useContext(HookContext)
     const zero = BigNumber.from(0)
+    const [loading, setLoading] = useState(false)
+    const [color, setColor] = useState("#fff")
     const [removeLPTokens, setRemoveLPTokens] = useState("0")
     const [removeCD, setRemoveCD] = useState(zero)
     const [removeEther, setRemoveEther] = useState(zero)
@@ -25,15 +28,18 @@ const LiquidityPosition = () => {
             if (lpBalance > removeLPTokens) {
                 const signer = await provider.getSigner()
                 const removeLPTokensWei = utils.parseEther(removeLPTokens)
+                setLoading(true)
+
                 await removeLiquidity(signer, removeLPTokensWei)
                 await getAmounts()
                 setRemoveCD(zero)
                 setRemoveEther(zero)
+                setLoading(false)
             }
         } catch (e) {
             console.error(e)
             alert("You dont have enough LP Tokens")
-
+            setLoading(false)
             setRemoveCD(zero)
             setRemoveEther(zero)
         }
@@ -105,19 +111,36 @@ const LiquidityPosition = () => {
                             </div>
                         ) : (
                             <div>
-                                <input
-                                    type={"number"}
-                                    value={removeLPTokens}
-                                    placeholder="Amount of LP tokens"
-                                    onChange={async (e) => {
-                                        setRemoveLPTokens(e.target.value || "0")
-                                        await _getTokensAfterRemove(
-                                            e.target.value || "0"
-                                        )
-                                    }}
-                                    className=" w-full outline-none border-2 border-[#291328] bg-transparent rounded-md p-2 my-5
-                                    focus:outline-none shadow-inner text-3xl text-white"
-                                />
+                                <div className="flex items-center border-1 p-0 border-2 text-black my-3 rounded-md bg-white border-[#291328] ">
+                                    <input
+                                        type={"text"}
+                                        value={removeLPTokens}
+                                        placeholder="Amount of LP tokens"
+                                        onChange={async (e) => {
+                                            setRemoveLPTokens(
+                                                e.target.value || "0"
+                                            )
+                                            await _getTokensAfterRemove(
+                                                e.target.value || "0"
+                                            )
+                                        }}
+                                        className=" w-full outline-none bg-transparent rounded-md p-1
+                                        focus:outline-none shadow-inner text-3xl "
+                                    />
+                                    <p
+                                        className="mx-3 text-blue-600 cursor-pointer"
+                                        onClick={async () => {
+                                            setRemoveLPTokens(
+                                                utils.formatEther(lpBalance)
+                                            )
+                                            await _getTokensAfterRemove(
+                                                utils.formatEther(lpBalance)
+                                            )
+                                        }}
+                                    >
+                                        Max
+                                    </p>
+                                </div>
                                 <div>
                                     <p className="text-xl text-white">
                                         {`You will get ${utils.formatEther(
@@ -132,7 +155,17 @@ const LiquidityPosition = () => {
                                     className="connectBtn mt-3"
                                     onClick={_removeLiquidity}
                                 >
-                                    Remove Tokens
+                                    {!loading ? (
+                                        "Remove Tokens"
+                                    ) : (
+                                        <ClipLoader
+                                            color={color}
+                                            loading={loading}
+                                            size={30}
+                                            aria-label="Loading Spinner"
+                                            data-testid="loader"
+                                        />
+                                    )}
                                 </div>
                             </div>
                         )}
