@@ -9,6 +9,7 @@ import { InjectedConnector } from "wagmi/connectors/injected"
 import { HookContext } from "../../context/hook"
 import { getEtherBalance } from "../../utils/getAmounts"
 import { getAmountOfTokensReceivedFromSwap, swapTokens } from "../../utils/swap"
+import HandleModal from "./HandleModal"
 import Input from "./Input"
 import Swap from "./Swap"
 
@@ -21,6 +22,7 @@ const SwapBoard = () => {
     const [color, setColor] = useState("#fff")
     const [tokenToBeReceivedAfterSwap, setTokenToBeReceivedAfterSwap] =
         useState(zero)
+    const [isSwaped, setIsSwaped] = useState(false)
     const {
         ethBalance,
         cdBalance,
@@ -29,6 +31,8 @@ const SwapBoard = () => {
         provider,
         reserveCD,
         getAmounts,
+        showModal,
+        setShowModal,
     } = useContext(HookContext)
     const tR = utils.formatEther(tokenToBeReceivedAfterSwap).substring(0, 7)
     // const ethValue = ethSelected ? swapAmount : tR
@@ -36,8 +40,10 @@ const SwapBoard = () => {
     const _swapTokens = async () => {
         try {
             const swapAmountWei = utils.parseEther(swapAmount)
+            setIsSwaped(false)
             if (!swapAmountWei.eq(zero)) {
                 const signer = await provider.getSigner()
+                setShowModal(true)
                 setLoading(true)
                 await swapTokens(
                     signer,
@@ -49,10 +55,13 @@ const SwapBoard = () => {
                 setSwapAmount("")
                 setTokenToBeReceivedAfterSwap(zero)
                 setLoading(false)
+                setIsSwaped(true)
             }
         } catch (e) {
             console.error(e)
             setSwapAmount("")
+            setTokenToBeReceivedAfterSwap(zero)
+            setShowModal(false)
         }
     }
 
@@ -123,7 +132,7 @@ const SwapBoard = () => {
     console.log(ethSelected)
 
     return (
-        <div className="section">
+        <div className="section relative">
             <div className="lg:w-[30%] w-[50%]  wrapper">
                 {/* first div  */}
                 <div className="flex w-full justify-between items-center">
@@ -139,12 +148,8 @@ const SwapBoard = () => {
                 {/* last div: connect button  */}
                 {!walletConnected ? (
                     <div className="connectBtn mt-3" onClick={connectWallet}>
-                        Connect Wallet
-                    </div>
-                ) : (
-                    <div className="connectBtn mt-3" onClick={_swapTokens}>
                         {!loading ? (
-                            "Swap Token"
+                            "Connect Wallet"
                         ) : (
                             <ClipLoader
                                 color={color}
@@ -154,6 +159,13 @@ const SwapBoard = () => {
                                 data-testid="loader"
                             />
                         )}
+                    </div>
+                ) : (
+                    <div
+                        className="swapBtn bg-[#0152a9] mt-3"
+                        onClick={_swapTokens}
+                    >
+                        Swap Token
                     </div>
                 )}
 
@@ -165,6 +177,14 @@ const SwapBoard = () => {
                     />
                 </div>
             </div>
+            {showModal && (
+                <HandleModal
+                    ethSelected={ethSelected}
+                    ethValue={ethValue}
+                    cdtValue={cdtValue}
+                    isSwaped={isSwaped}
+                />
+            )}
         </div>
     )
 }

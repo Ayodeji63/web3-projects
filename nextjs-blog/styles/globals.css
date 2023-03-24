@@ -21,7 +21,11 @@ background: rgb(9, 7, 31);
   @apply h-6 w-6 text-gray-400 
 }
 .connectBtn {
-  @apply bg-[#0f3b6d] w-full flex justify-center items-center rounded-2xl text-[#0d80fd] text-xl font-medium cursor-pointer h-14 hover:bg-[#1d4c81]
+  @apply bg-[#0f3b6d] w-full flex justify-center items-center rounded-2xl text-[#0d80fd] text-xl font-medium cursor-pointer h-14 hover:bg-[#1d4c81] 
+}
+
+.swapBtn {
+    @apply bg-[#0d81fc] w-full flex justify-center items-center rounded-2xl text-[#4492e4] text-xl font-medium cursor-pointer h-14 hover:bg-[#1d4c81] text-white
 }
 
 .headerConnect {
@@ -45,4 +49,14 @@ background: rgb(9, 7, 31);
 }
 .position {
   @apply flex bg-blue-500 overflow-hidden items-center px-2 py-1 h-fit text-white rounded-xl cursor-pointer hover:bg-blue-600
+}
+
+.before::before {
+  content: '';
+  position: absolute;
+  z-index: -10;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  filter: opacity(65%);
 }

@@ -33,6 +33,7 @@ export const HookProvider = ({ children }) => {
     const [etherBalanceContract, setEtherBalanceContract] = useState(zero)
     const [addLiquidity, setAddLiquidity] = useState(false)
     const [provider, setProvider] = useState("")
+    const [showModal, setShowModal] = useState(false)
 
     const getProviderOrSigner = async (needSigner = false) => {
         const provider = await web3ModalRef.current.connect()
@@ -125,6 +126,8 @@ export const HookProvider = ({ children }) => {
                 reserveCD,
                 etherBalanceContract,
                 lpBalance,
+                showModal,
+                setShowModal,
             }}
         >
             {children}
