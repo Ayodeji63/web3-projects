@@ -6,7 +6,7 @@ import { HookContext } from "../../context/hook"
 import { calaculateCD } from "../../utils/addLiquidity"
 
 const Input = ({ param }) => {
-    const { value, setValue } = param
+    // const { value, setValue } = param
     const zero = BigNumber.from(0)
     const { walletConnected, reserveCD, etherBalanceContract } =
         useContext(HookContext)
