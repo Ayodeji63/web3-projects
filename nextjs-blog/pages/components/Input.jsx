@@ -11,11 +11,11 @@ const Input = ({ param }) => {
     const { walletConnected, reserveCD, etherBalanceContract } =
         useContext(HookContext)
     const handleChange = async (e) => {
-        if (setValue) {
+        if (param.setValue) {
             if (!param.setCdTokens) {
-                setValue(e.target.value)
+                param.setValue(e.target.value)
             } else {
-                setValue(e.target.value || "0")
+                param.setValue(e.target.value || "0")
                 const _addCDtokens = await calaculateCD(
                     e.target.value || "0",
                     etherBalanceContract,
@@ -58,11 +58,11 @@ const Input = ({ param }) => {
                     <p>
                         Balance:{" "}
                         {ethers.utils.formatEther(param.token).substring(0, 5)}{" "}
-                        {setValue && (
+                        {param.setValue && (
                             <span
                                 className="text-blue-500 cursor-pointer"
                                 onClick={() =>
-                                    setValue(
+                                    param.setValue(
                                         ethers.utils
                                             .formatEther(param.token)
                                             .substring(0, 10)
