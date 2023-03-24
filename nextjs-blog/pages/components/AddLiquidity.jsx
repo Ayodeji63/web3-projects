@@ -18,8 +18,8 @@ const AddLiquidity = () => {
         reserveCD,
     } = useContext(HookContext)
     const zero = BigNumber.from(0)
-    const [addCDTokens, setAddCDTokens] = useState(zero)
-    const [addEther, setAddEther] = useState(zero)
+    const [addCDTokens, setAddCDTokens] = useState("0")
+    const [addEther, setAddEther] = useState("0")
     const [loading, setLoading] = useState(false)
     const [color, setColor] = useState("#fff")
 
@@ -60,14 +60,14 @@ const AddLiquidity = () => {
             name: "ETH",
             src: "/ethre.webp",
             token: ethBalance,
-            value: addEther,
+            tokenValue: addEther || "0",
             setValue: setAddEther,
         },
         {
             name: "CDT",
             src: "/learn.jpg",
             token: cdBalance,
-            value: addCDTokens,
+            tokenValue: addCDTokens || "0",
             setValue: setAddCDTokens,
         },
     ]
@@ -85,7 +85,6 @@ const AddLiquidity = () => {
             src: "/learn.jpg",
             token: cdBalance,
             value: addCDTokens,
-            setValue: "",
         },
     ]
     console.log(addCDTokens)

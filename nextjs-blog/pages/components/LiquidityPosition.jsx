@@ -84,7 +84,7 @@ const LiquidityPosition = () => {
                         onClick={() => setAddLiquidity(true)}
                     >
                         <PlusIcon className="h-4 w-4 text-white" />
-                        <h1 className="text-base font-medium">New Position</h1>
+                        <h1 className="text-base font-medium">Add Liquidity</h1>
                     </div>
                 </div>
             </div>
