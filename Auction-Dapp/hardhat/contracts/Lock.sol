@@ -1,34 +1,69 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-// Uncomment this line to use console.log
-// import "hardhat/console.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract Lock {
-    uint public unlockTime;
-    address payable public owner;
+contract MyToken is ERC721, ERC721URIStorage, Ownable {
+    using Counters for Counters.Counter;
 
-    event Withdrawal(uint amount, uint when);
+    Counters.Counter private _tokenIdCounter;
+    string private _name;
+    string private _symbol;
 
-    constructor(uint _unlockTime) payable {
+    constructor() ERC721("", "") {}
+
+    function setTokenNameAndSymbol(
+        string memory name,
+        string memory symbol
+    ) public {
         require(
-            block.timestamp < _unlockTime,
-            "Unlock time should be in the future"
+            bytes(name).length > 0 && bytes(symbol).length > 0,
+            "Name and symbol cannot be empty"
         );
-
-        unlockTime = _unlockTime;
-        owner = payable(msg.sender);
+        _name = name;
+        _symbol = symbol;
     }
 
-    function withdraw() public {
-        // Uncomment this line, and the import of "hardhat/console.sol", to print a log in your terminal
-        // console.log("Unlock time is %o and block timestamp is %o", unlockTime, block.timestamp);
+    function safeMint(
+        address to,
+        string memory uri,
+        string memory name,
+        string memory symbol
+    ) public {
+        require(
+            bytes(name).length > 0 && bytes(symbol).length > 0,
+            "Name and symbol cannot be empty"
+        );
+        _name = name;
+        _symbol = symbol;
+        uint256 tokenId = _tokenIdCounter.current();
+        _tokenIdCounter.increment();
+        _safeMint(to, tokenId);
+        _setTokenURI(tokenId, uri);
+    }
 
-        require(block.timestamp >= unlockTime, "You can't withdraw yet");
-        require(msg.sender == owner, "You aren't the owner");
+    // The following functions are overrides required by Solidity.
 
-        emit Withdrawal(address(this).balance, block.timestamp);
+    function _burn(
+        uint256 tokenId
+    ) internal override(ERC721, ERC721URIStorage) {
+        super._burn(tokenId);
+    }
 
-        owner.transfer(address(this).balance);
+    function tokenURI(
+        uint256 tokenId
+    ) public view override(ERC721, ERC721URIStorage) returns (string memory) {
+        return super.tokenURI(tokenId);
+    }
+
+    function name() public view override returns (string memory) {
+        return _name;
+    }
+
+    function symbol() public view override returns (string memory) {
+        return _symbol;
     }
 }
