@@ -47,7 +47,9 @@ const Header = () => {
                         <Link href={"/"}>Swap</Link>
                     </li>
                     <li className="li">Tokens</li>
-                    <li className="li">NFTs</li>
+                    <li className="li">
+                        <Link href={"NFT"}>NFTs</Link>
+                    </li>
                     <li className="li">
                         <Link href={"/Pool"}>Pool</Link>
                     </li>
