@@ -65,6 +65,10 @@ body {
   background-color: #fff;
   filter: opacity(65%);
 }
+.nfts-container{
+  padding: 50px;
+  margin-top: 40px;
+}
 .nft-cards {
   display: flex;
   justify-content: center;
@@ -73,13 +77,13 @@ body {
 .nft-card {
   background: transparent;
   width: 300px;
-  height: 500px;
+  height: 454px;
   padding: 10px;
   border: 1.2px solid #2a2e31;
   border-radius: 20px;
 }
 .nft-card > img {
-  height: 300px;
+  height: 270px;
   width: 300px;
   object-fit: cover;
   border-radius: 15px;
