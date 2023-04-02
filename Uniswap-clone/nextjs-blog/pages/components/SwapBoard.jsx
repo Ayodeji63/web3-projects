@@ -12,6 +12,7 @@ import { getAmountOfTokensReceivedFromSwap, swapTokens } from "../../utils/swap"
 import HandleModal from "./HandleModal"
 import Input from "./Input"
 import Swap from "./Swap"
+import Button from "./Button"
 
 const SwapBoard = () => {
     const zero = BigNumber.from(0)
@@ -161,12 +162,7 @@ const SwapBoard = () => {
                         )}
                     </div>
                 ) : (
-                    <div
-                        className="swapBtn bg-[#0152a9] mt-3"
-                        onClick={_swapTokens}
-                    >
-                        Swap Token
-                    </div>
+                    <Button click={_swapTokens} text={"Swap Token"} />
                 )}
 
                 {/* overflow: button  */}
