@@ -65,7 +65,7 @@ body {
   background-color: #fff;
   filter: opacity(65%);
 }
-.nfts-container{
+.nfts-container {
   padding: 50px;
   margin-top: 40px;
 }
@@ -89,21 +89,34 @@ body {
   border-radius: 15px;
   margin-bottom: 15px;
 }
-.owner{
-  color: #A3A4A6;
+.owner {
+  color: #a3a4a6;
   font-size: 16px;
 }
-.nft-name{
-  color: #FFF;
+.nft-name {
+  color: #fff;
   font-size: 18px;
   font-weight: 500;
   margin-top: 5px;
 }
-.price-container{
+.price-container {
   display: flex;
   gap: 90px;
   padding: 10px;
   margin-top: 15px;
-  background: #212528;
+  background: #212538;
   border-radius: 15px;
+}
+.price,
+.bid span {
+  color: #a3a4a6;
+}
+.price,
+.bid h5 {
+  color: #fff;
+}
+.nft-card:hover {
+  transform: translateY(-5px);
+  cursor: pointer;
+  transition: ease-in-out 0.5s;
 }
