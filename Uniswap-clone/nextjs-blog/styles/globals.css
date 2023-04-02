@@ -72,6 +72,7 @@ body {
 }
 .nft-cards {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 20px;
   align-items: center;
@@ -121,4 +122,10 @@ body {
   transform: translateY(-5px);
   cursor: pointer;
   transition: ease-in-out 0.5s;
+}
+.nft-text {
+  color: #a3a4a6;
+  font-size: 30px;
+  font-weight: 500;
+  padding: 50px;
 }
