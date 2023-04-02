@@ -13,6 +13,7 @@ body {
     rgba(0, 0, 30, 1) 47%,
     rgba(7, 9, 9, 1) 100%
   );
+  overflow-x: hidden;
 }
 
 .li {
@@ -72,6 +73,7 @@ body {
 .nft-cards {
   display: flex;
   justify-content: center;
+  gap: 20px;
   align-items: center;
 }
 .nft-card {
