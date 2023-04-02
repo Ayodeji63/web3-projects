@@ -4,6 +4,12 @@
 
 .eth {
   background: rgb(9, 7, 31);
+  background: radial-gradient(
+    circle,
+    rgba(9, 7, 31, 1) 0%,
+    rgba(0, 0, 30, 1) 47%,
+    rgba(7, 9, 9, 1) 100%
+  );
 }
 body {
   @apply h-screen w-screen text-gray-500;
@@ -121,7 +127,8 @@ body {
 .nft-card:hover {
   transform: translateY(-5px);
   cursor: pointer;
-  transition: ease-in-out 0.5s;
+  transition: ease-in-out 0.4s;
+ 
 }
 .nft-text {
   color: #a3a4a6;
