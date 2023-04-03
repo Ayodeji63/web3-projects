@@ -26,6 +26,11 @@ const Nft = () => {
                     <h5>{nft.bid}</h5>
                   </div>
                 </div>
+                <div className="overlay">
+                    <div className="action-container">
+                        <button>Buy Now</button>
+                    </div>
+                </div>
               </div>
             </a>
           ))}
