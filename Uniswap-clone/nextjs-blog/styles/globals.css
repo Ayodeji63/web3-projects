@@ -12,6 +12,7 @@
   );
 }
 body {
+create-NFT-Design-Component
   @apply h-screen w-screen text-gray-500;
   background: radial-gradient(
     circle,
@@ -20,6 +21,18 @@ body {
     rgba(7, 9, 9, 1) 100%
   );
   overflow-x: hidden;
+
+  @apply h-screen w-screen text-gray-500 bg-[#111524] scrollbar-hide
+   @apply h-screen w-screen text-gray-500;
+  background: radial-gradient(
+    circle,
+    rgba(9, 7, 31, 1) 0%,
+    rgba(0, 0, 30, 1) 47%,
+    rgba(7, 9, 9, 1) 100%
+  );
+  overflow-x: hidden;
+  
+ main
 }
 
 .li {
@@ -63,6 +76,13 @@ body {
   @apply flex bg-blue-500 overflow-hidden items-center px-2 py-1 h-fit text-white rounded-xl cursor-pointer hover:bg-blue-600;
 }
 
+.preview {
+  @apply flex w-full justify-center items-center text-center rounded-lg border-2 h-[23rem] border-[#333a4b] cursor-pointer hover:border-[3px] hover:border-[#3c4351] hover:shadow-lg hover:shadow-slate-900
+}
+
+.label {
+  color: #fff !important;
+}
 .before::before {
   content: "";
   position: absolute;
