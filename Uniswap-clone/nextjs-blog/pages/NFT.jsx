@@ -9,7 +9,10 @@ const Nft = () => {
         <div>
             <Header />
       <div className="nfts-container">
+        <div className="nft-text-button">
         <h2 className="nft-text">NFT Collections</h2>
+        <a href="createNFT" className="create-nft-button">Create NFT</a>
+        </div>
         <div className="nft-cards">
           {nftData.map((nft) => (
             <a href="#">

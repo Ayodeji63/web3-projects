@@ -169,3 +169,16 @@ body {
   padding: 10px;
   z-index: 9999;
 }
+.create-nft-button{
+  background: #FFF;
+  height: 35px;
+  width: 120px;
+  border-radius: 10px;
+  text-align: center;
+  padding-top: 5px;
+}
+.nft-text-button{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
