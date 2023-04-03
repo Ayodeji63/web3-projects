@@ -1,7 +1,6 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
-
 .eth {
   background: rgb(9, 7, 31);
   background: radial-gradient(
@@ -168,4 +167,20 @@ body {
   border-radius: 10px;
   padding: 10px;
   z-index: 9999;
+}
+.create-nft-button{
+  background: #FFF;
+  height: 35px;
+  width: 120px;
+  border-radius: 10px;
+  text-align: center;
+  padding-top: 5px;
+}
+.nft-text-button{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header{
+  z-index: 999;
 }
