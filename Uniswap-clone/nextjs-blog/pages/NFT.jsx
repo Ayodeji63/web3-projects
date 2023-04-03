@@ -28,7 +28,7 @@ const Nft = () => {
                 </div>
                 <div className="overlay">
                     <div className="action-container">
-                        <button className="action-buy">Buy Now</button>
+                        <button className="action-buy">Buy Now</button>    
                     </div>
                 </div>
               </div>
