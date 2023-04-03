@@ -12,7 +12,6 @@
   );
 }
 body {
-create-NFT-Design-Component
   @apply h-screen w-screen text-gray-500;
   background: radial-gradient(
     circle,
@@ -21,19 +20,8 @@ create-NFT-Design-Component
     rgba(7, 9, 9, 1) 100%
   );
   overflow-x: hidden;
-
-  @apply h-screen w-screen text-gray-500 bg-[#111524] scrollbar-hide
-   @apply h-screen w-screen text-gray-500;
-  background: radial-gradient(
-    circle,
-    rgba(9, 7, 31, 1) 0%,
-    rgba(0, 0, 30, 1) 47%,
-    rgba(7, 9, 9, 1) 100%
-  );
-  overflow-x: hidden;
-  
- main
 }
+
 
 .li {
   @apply mr-7 hover:text-white cursor-pointer text-lg active:text-white;
@@ -66,11 +54,8 @@ create-NFT-Design-Component
 }
 
 .section {
-create-NFT-Design-Component
  @apply w-full h-full mt-40 items-center flex justify-center mr-auto 
 
-  @apply w-full h-full mt-40 items-center flex justify-center mr-auto 
- main
 }
 
 .wrapper {
