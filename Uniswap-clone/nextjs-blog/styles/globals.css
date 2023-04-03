@@ -22,6 +22,13 @@ body {
   overflow-x: hidden;
 }
 
+.nav {
+  @apply h-full cursor-pointer hover:text-white text-gray-500 transition-all ease-linear duration-300  rounded-2xl flex items-center p-3 font-medium
+}
+
+.active {
+  @apply bg-blue-600 text-white
+}
 
 .li {
   @apply mr-7 hover:text-white cursor-pointer text-lg active:text-white;
