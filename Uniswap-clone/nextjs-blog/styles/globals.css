@@ -1,7 +1,6 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
-
 .eth {
   background: rgb(9, 7, 31);
   background: radial-gradient(
