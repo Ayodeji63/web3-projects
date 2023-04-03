@@ -31,7 +31,7 @@ const Header = () => {
 
     const router = useRouter()
     return (
-        <div className="p-4 flex items-center justify-between">
+        <div className="p-4 w-full flex items-center justify-between fixed top-0 bg-[#111524]">
             <div className="flex items-center">
                 <Image
                     src={"/uniswap.webp"}
