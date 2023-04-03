@@ -33,5 +33,13 @@ export const nftData = [{
     nft_Name: "BTC_Chopsticks NFT choloclate",
     price: "0.08 MATIC",
     bid: "No bids yet"
+},
+{
+    id: 5,
+    owner: "NFT4",
+    nft_Image: fourthNFT,
+    nft_Name: "BTC_Chopsticks NFT choloclate",
+    price: "0.08 MATIC",
+    bid: "No bids yet"
 }
 ]
