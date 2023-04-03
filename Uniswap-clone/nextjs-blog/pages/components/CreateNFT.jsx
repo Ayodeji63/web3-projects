@@ -10,23 +10,52 @@ import { alpha, styled } from "@mui/material/styles"
 import { pink } from "@mui/material/colors"
 import Switch from "@mui/material/Switch"
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material"
+import { createNFt } from "../../utils/CreateNFT"
+import { Blob } from "nft.storage"
 
 const CreateNFT = () => {
     const label = { inputProps: { "aria-label": "Color switch demo" } }
-    const { address } = useContext(HookContext)
+    const { address, provider } = useContext(HookContext)
     const fileRef = useRef("")
     const [startTime, setStartTime] = useState("")
     const [endTime, setEndTime] = useState("")
     const [nftImage, setNftImage] = useState("")
+    const [name, setName] = useState("")
+    const [symbol, setSymbol] = useState("")
+    const [description, setDescription] = useState("")
+    const [imageParam, setImageParam] = useState("")
 
-    const addImage = (e) => {
-        const reader = new FileReader()
-        if (e.target.files[0]) {
-            reader.readAsDataURL(e.target.files[0])
+    // const addImage = async (e) => {
+    //     const reader = new FileReader()
+    //     if (e.target.files[0]) {
+    //         // reader.readAsText(e.target.value)
+    //         reader.readAsDataURL(e.target.files[0])
+    //     }
+    //     reader.onload = (readerEvent) => {
+    //         setNftImage(readerEvent.target.result)
+    //     }
+    // }
+
+    const addImage = async (e) => {
+        const file = e.target.files[0]
+        if (file) {
+            const blob = await fileToBlob(file)
+            setImageParam(blob)
+            const image = URL.createObjectURL(blob)
+            setNftImage(image)
         }
-        reader.onload = (readerEvent) => {
-            setNftImage(readerEvent.target.result)
-        }
+    }
+    function fileToBlob(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader()
+            reader.onload = () => {
+                const arrayBuffer = reader.result
+                const blob = new Blob([arrayBuffer], { type: file.type })
+                resolve(blob)
+            }
+            reader.onerror = reject
+            reader.readAsArrayBuffer(file)
+        })
     }
 
     const removeImage = () => {
@@ -110,6 +139,8 @@ const CreateNFT = () => {
                     name={"Display Name"}
                     placeholder={"Enter Collection name"}
                     required={"required"}
+                    nftParam={name}
+                    setNftParam={setName}
                 />
 
                 <p className="text-gray-500 text-[13px] font-medium mt-3">
@@ -120,6 +151,8 @@ const CreateNFT = () => {
                     name={"Symbol"}
                     placeholder={"Enter Token Symbol"}
                     required={"required"}
+                    nftParam={symbol}
+                    setNftParam={setSymbol}
                 />
 
                 <FormInput
@@ -128,6 +161,8 @@ const CreateNFT = () => {
                         "Spread some words about your token collection"
                     }
                     required={"optional"}
+                    nftParam={description}
+                    setNftParam={setDescription}
                 />
 
                 <div className="mt-8 flex w-full justify-between items-start">
@@ -187,7 +222,18 @@ const CreateNFT = () => {
                 </FormControl>
 
                 <div className="mt-10 mb-20">
-                    <Button text={"Create Collection"} />
+                    <Button
+                        text={"Create Collection"}
+                        click={() =>
+                            createNFt(
+                                provider,
+                                name,
+                                symbol,
+                                imageParam,
+                                description
+                            )
+                        }
+                    />
                 </div>
             </div>
 

@@ -845,3 +845,407 @@ export const EXCHANGE_CONTRACT_ABI = [
         type: "function",
     },
 ]
+
+export const AUCTION_ADDRESS = " 0xf065184DAC3Db95DB0eed0100a4B0Ae930E2c5B6"
+
+export const TOKEN_FACTORY_ADDRESS =
+    "0x8b66F018607Bc27614f270B392e105F130681fA0"
+
+export const AUCTION_ABI = [
+    {
+        inputs: [],
+        stateMutability: "nonpayable",
+        type: "constructor",
+    },
+    {
+        inputs: [
+            {
+                internalType: "uint256",
+                name: "_tokenId",
+                type: "uint256",
+            },
+        ],
+        name: "_getApproved",
+        outputs: [
+            {
+                internalType: "address",
+                name: "",
+                type: "address",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        name: "auctionDetails",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "highestBid",
+                type: "uint256",
+            },
+            {
+                internalType: "address",
+                name: "highestBidder",
+                type: "address",
+            },
+            {
+                internalType: "uint256",
+                name: "bidEnd",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "auctionEndTime",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "auctionStartTime",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        name: "bidInfo",
+        outputs: [
+            {
+                internalType: "address",
+                name: "bidder",
+                type: "address",
+            },
+            {
+                internalType: "uint256",
+                name: "bid",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "address",
+                name: "",
+                type: "address",
+            },
+        ],
+        name: "bids",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "claim",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "uint256",
+                name: "_nftTokenId",
+                type: "uint256",
+            },
+            {
+                internalType: "uint256",
+                name: "_minBid",
+                type: "uint256",
+            },
+            {
+                internalType: "uint256",
+                name: "_end",
+                type: "uint256",
+            },
+            {
+                internalType: "uint256",
+                name: "_start",
+                type: "uint256",
+            },
+            {
+                internalType: "address",
+                name: "nftContractAddress",
+                type: "address",
+            },
+        ],
+        name: "createAuction",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "uint256",
+                name: "_nftTokenId",
+                type: "uint256",
+            },
+        ],
+        name: "getOwner",
+        outputs: [
+            {
+                internalType: "address",
+                name: "",
+                type: "address",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "highestBid",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "highestBidder",
+        outputs: [
+            {
+                internalType: "address payable",
+                name: "",
+                type: "address",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "placeBid",
+        outputs: [],
+        stateMutability: "payable",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "s_bidIncr",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "s_minBid",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "thisAdress",
+        outputs: [
+            {
+                internalType: "address",
+                name: "",
+                type: "address",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "tokenId",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "withdraw",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        stateMutability: "payable",
+        type: "receive",
+    },
+]
+
+export const TOKEN_FACTORY_ABI = [
+    {
+        inputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        name: "Owner",
+        outputs: [
+            {
+                internalType: "address",
+                name: "",
+                type: "address",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        name: "TokenFactoryArray",
+        outputs: [
+            {
+                internalType: "contract Token",
+                name: "",
+                type: "address",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "string",
+                name: "uri",
+                type: "string",
+            },
+        ],
+        name: "_safeMint",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "address",
+                name: "_auctionContract",
+                type: "address",
+            },
+            {
+                internalType: "uint256",
+                name: "_tokenId",
+                type: "uint256",
+            },
+            {
+                internalType: "uint256",
+                name: "index",
+                type: "uint256",
+            },
+        ],
+        name: "approveAuctionContract",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "string",
+                name: "name",
+                type: "string",
+            },
+            {
+                internalType: "string",
+                name: "symbol",
+                type: "string",
+            },
+            {
+                internalType: "string",
+                name: "uri",
+                type: "string",
+            },
+        ],
+        name: "createNewToken",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "address",
+                name: "",
+                type: "address",
+            },
+        ],
+        name: "indexArry",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+]

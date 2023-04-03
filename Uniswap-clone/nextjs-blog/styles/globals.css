@@ -42,7 +42,7 @@ body {
 }
 
 .section {
-  @apply w-full h-full mt-20 flex justify-center mr-auto 
+  @apply w-full h-full mt-40 items-center flex justify-center mr-auto 
 }
 
 .wrapper {
