@@ -70,7 +70,7 @@ const LiquidityPosition = () => {
         }
     }
     return (
-        <div className="w-full h-full mt-20 flex flex-col items-center">
+        <div className="w-full h-full mt-40 flex flex-col items-center">
             <div className=" flex justify-between h-fit w-[50%] md:[70%]">
                 <h1 className="text-4xl text-white">Pools</h1>
 
