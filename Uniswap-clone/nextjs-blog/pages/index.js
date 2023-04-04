@@ -9,7 +9,7 @@ import SwapBoard from "./components/SwapBoard"
 export default function Home() {
     const { showModal, setShowModal } = useContext(HookContext)
     return (
-        <div className=" flex flex-col relative overflow-hidden">
+        <div className=" flex flex-col relative scrollbar-hide overflow-hidden">
             <Head>
                 <title>Uniswap</title>
                 <link rel="icon" href="/uniswap.webp" />

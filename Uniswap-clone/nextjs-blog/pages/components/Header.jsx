@@ -31,7 +31,7 @@ const Header = () => {
 
     const router = useRouter()
     return (
-        <div className="p-4 w-full flex items-center justify-between fixed top-0 bg-[#111524]">
+        <div className="header p-4 w-full flex items-center justify-between fixed top-0 bg-[#111524]">
             <div className="flex items-center">
                 <Image
                     src={"/uniswap.webp"}
@@ -48,7 +48,7 @@ const Header = () => {
                     </li>
                     <li className="li">Tokens</li>
                     <li className="li">
-                        <Link href={"Bid"}>NFTs</Link>
+                        <Link href={"/NFT"}>NFTs</Link>
                     </li>
                     <li className="li">
                         <Link href={"/Pool"}>Pool</Link>
