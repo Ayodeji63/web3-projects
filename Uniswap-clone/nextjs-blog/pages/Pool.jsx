@@ -12,7 +12,7 @@ import LiquidityPosition from "./components/LiquidityPosition"
 const Token = () => {
     const { addLiquidity } = useContext(HookContext)
     return (
-        <div className="body bg-[#111524]">
+        <div className="">
             <Header />
 
             {!addLiquidity ? <LiquidityPosition /> : <AddLiquidity />}

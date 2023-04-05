@@ -11,16 +11,25 @@
   );
 }
 body {
-  @apply h-screen w-screen text-gray-500;
-  background: radial-gradient(
+  @apply h-screen w-screen text-gray-500 bg-[#111524] overflow-x-hidden;
+  /* background: radial-gradient(
     circle,
     rgba(9, 7, 31, 1) 0%,
     rgba(0, 0, 30, 1) 47%,
     rgba(7, 9, 9, 1) 100%
-  );
-  overflow-x: hidden;
+  ); */
 }
 
+.nav {
+  @apply h-full cursor-pointer hover:text-white text-gray-500 transition-all ease-linear duration-300  rounded-2xl flex items-center p-3 font-medium
+}
+
+.icon2 {
+  @apply flex hover:bg-gray-600  hover:text-white rounded-lg cursor-pointer px-2 py-1
+}
+.active {
+  @apply bg-blue-600 text-white
+}
 
 .li {
   @apply mr-7 hover:text-white cursor-pointer text-lg active:text-white;
