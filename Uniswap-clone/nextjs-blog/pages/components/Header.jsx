@@ -48,7 +48,7 @@ const Header = () => {
                     </li>
                     <li className="li">Tokens</li>
                     <li className="li">
-                        <Link href={"/NFT"}>NFTs</Link>
+                        <Link href={"NFT"}>NFTs</Link>
                     </li>
                     <li className="li">
                         <Link href={"/Pool"}>Pool</Link>
