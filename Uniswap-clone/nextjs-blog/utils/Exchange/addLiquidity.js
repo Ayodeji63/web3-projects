@@ -4,7 +4,7 @@ import {
     EXCHANGE_CONTRACT_ADDRESS,
     TOKEN_CONTRACT_ADDRESS,
     TOKEN_CONTRACT_ABI,
-} from "../constants"
+} from "../../constants"
 
 export const _AddLiquidity = async (
     signer,

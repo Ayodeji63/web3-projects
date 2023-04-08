@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react"
 import Image from "next/image"
 import { useContext } from "react"
-import { HookContext } from "../../context/hook"
+import { HookContext, nftDataContext } from "../../context/hook"
 import { truncate } from "truncate-ethereum-address"
 import Button from "../components/Button"
 import { XCircleIcon } from "@heroicons/react/24/outline"
@@ -10,11 +10,17 @@ import { alpha, styled } from "@mui/material/styles"
 import { pink } from "@mui/material/colors"
 import Switch from "@mui/material/Switch"
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material"
-import { createNFt } from "../../utils/CreateNFT"
+import {
+    createAuction,
+    createNFt,
+    fetchAllAuction,
+    getParam,
+} from "../../utils/Auction/CreateNFT"
 import { Blob } from "nft.storage"
 import Header from "../components/Header"
-import { BigNumber } from "ethers"
+import { BigNumber, ethers, utils } from "ethers"
 import { useRouter } from "next/router"
+import { parseEther } from "ethers/lib/utils.js"
 
 const CreateNFT = () => {
     const label = { inputProps: { "aria-label": "Color switch demo" } }
@@ -30,33 +36,51 @@ const CreateNFT = () => {
     const [imageParam, setImageParam] = useState("")
     const [bid, setBid] = useState(zero)
     const router = useRouter()
+    let [clickedNFT, setClickedNFT] = useContext(nftDataContext)
+
     const addImage = async (e) => {
-        const file = e.target.files[0]
-        if (file) {
-            const blob = await fileToBlob(file)
-            setImageParam(blob)
-            const image = URL.createObjectURL(blob)
-            setNftImage(image)
+        const reader = new FileReader()
+        if (e.target.files[0]) {
+            reader.readAsDataURL(e.target.files[0])
         }
-    }
-    function fileToBlob(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader()
-            reader.onload = () => {
-                const arrayBuffer = reader.result
-                const blob = new Blob([arrayBuffer], { type: file.type })
-                resolve(blob)
-            }
-            reader.onerror = reject
-            reader.readAsArrayBuffer(file)
-        })
+        reader.onload = (readerEvent) => {
+            setNftImage(readerEvent.target.result)
+        }
     }
 
     const removeImage = () => {
         setNftImage(null)
     }
 
-    const handleClick = () => {
+    const handleClick = async () => {
+        const create = await createNFt(
+            provider,
+            name,
+            symbol,
+            nftImage,
+            description
+        )
+        console.log(create)
+
+        const _minBid = parseEther(bid)
+        console.log(_minBid)
+        console.log(endTime)
+        const end_Time = utils.parseEther(String(endTime))
+        console.log(end_Time)
+        console.log(startTime)
+        const start_Time = utils.parseEther(String(startTime))
+        console.log(start_Time)
+        const auctionInfo = await createAuction(
+            provider,
+            _minBid,
+            end_Time,
+            start_Time
+        )
+        console.log(auctionInfo)
+        const param = await getParam(provider)
+        setClickedNFT(param)
+        console.log(clickedNFT)
+
         router.push("/page/Bid")
     }
     return (
@@ -194,7 +218,7 @@ const CreateNFT = () => {
                             onChange={(e) => setStartTime(e.target.value)}
                             className=" text-white rounded-2xl  border-[#333a4b]"
                         >
-                            <MenuItem value={10}>Now</MenuItem>
+                            <MenuItem value={0}>Now</MenuItem>
                             <MenuItem value={20}>20sec</MenuItem>
                             <MenuItem value={30}>30sec</MenuItem>
                         </Select>
@@ -214,9 +238,9 @@ const CreateNFT = () => {
                             onChange={(e) => setEndTime(e.target.value)}
                             className=" text-white rounded-2xl "
                         >
-                            <MenuItem value={10}>150sec</MenuItem>
-                            <MenuItem value={20}>200sec</MenuItem>
-                            <MenuItem value={30}>300sec</MenuItem>
+                            <MenuItem value={150}>150sec</MenuItem>
+                            <MenuItem value={200}>200sec</MenuItem>
+                            <MenuItem value={300}>300sec</MenuItem>
                         </Select>
                     </FormControl>
                     <div className="mt-10 mb-20">

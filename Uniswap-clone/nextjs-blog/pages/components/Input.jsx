@@ -3,7 +3,7 @@ import Image from "next/image"
 import React, { useContext, useState } from "react"
 import { useAccount, useBalance } from "wagmi"
 import { HookContext } from "../../context/hook"
-import { calaculateCD } from "../../utils/addLiquidity"
+import { calaculateCD } from "../../utils/Exchange/addLiquidity"
 
 const Input = ({ param }) => {
     // const { value, setValue } = param

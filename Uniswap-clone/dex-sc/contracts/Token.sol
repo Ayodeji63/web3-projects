@@ -9,6 +9,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 contract Token is ERC721, ERC721URIStorage {
     using Counters for Counters.Counter;
     address owner;
+    uint public TokenId;
 
     Counters.Counter private _tokenIdCounter;
 
@@ -27,6 +28,7 @@ contract Token is ERC721, ERC721URIStorage {
     function safeMint(address to, string memory uri) public {
         require(msg.sender == owner, "Token: Not Owner");
         uint256 tokenId = _tokenIdCounter.current();
+        TokenId = tokenId;
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
@@ -46,5 +48,9 @@ contract Token is ERC721, ERC721URIStorage {
         uint256 tokenId
     ) public view override(ERC721, ERC721URIStorage) returns (string memory) {
         return super.tokenURI(tokenId);
+    }
+
+    function getTokenId() public view returns (uint) {
+        return TokenId;
     }
 }

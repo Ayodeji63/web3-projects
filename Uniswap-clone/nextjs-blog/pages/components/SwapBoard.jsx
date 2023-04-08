@@ -7,8 +7,11 @@ import { ClipLoader } from "react-spinners"
 import { useAccount, useBalance, useConnect, useEnsName } from "wagmi"
 import { InjectedConnector } from "wagmi/connectors/injected"
 import { HookContext } from "../../context/hook"
-import { getEtherBalance } from "../../utils/getAmounts"
-import { getAmountOfTokensReceivedFromSwap, swapTokens } from "../../utils/swap"
+import { getEtherBalance } from "../../utils/Exchange/getAmounts"
+import {
+    getAmountOfTokensReceivedFromSwap,
+    swapTokens,
+} from "../../utils/Exchange/swap"
 import HandleModal from "./HandleModal"
 import Input from "./Input"
 import Swap from "./Swap"
