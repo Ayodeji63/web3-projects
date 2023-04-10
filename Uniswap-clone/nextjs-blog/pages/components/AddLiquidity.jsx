@@ -1,7 +1,7 @@
 import { Cog6ToothIcon } from "@heroicons/react/24/outline"
 import { ArrowLeftIcon } from "@heroicons/react/24/solid"
 import React, { useContext, useState } from "react"
-import { _AddLiquidity } from "../../utils/addLiquidity"
+import { _AddLiquidity } from "../../utils/Exchange/addLiquidity"
 import { HookContext } from "../../context/hook"
 import Input from "./Input"
 import { BigNumber, utils } from "ethers"

@@ -2,14 +2,29 @@
 pragma solidity ^0.8.9;
 
 contract Auction {
-    uint public auctionEndTime;
-    uint public auctionStartTime;
-    uint public s_minBid;
-    uint public s_bidIncr;
-    uint public highestBid;
-    address payable public highestBidder;
+    struct BidInfo {
+        address bidder;
+        uint bid;
+    }
+    struct NFTAUCTION {
+        uint tokenId;
+        uint auctionEndTime;
+        uint auctionStartTime;
+        uint minBid;
+        uint highestBid;
+        address nftContractAddress;
+        address payable highestBidder;
+        string tokenURI;
+        string nftName;
+        string nftSymbol;
+        address nftOwner;
+        BidInfo[] bidInfo;
+        INftContract nftContract;
+    }
+
+    mapping(uint => NFTAUCTION) public nftAuction;
+    uint public numAuctions;
     address payable owner;
-    uint public tokenId;
     address public thisAdress = address(this);
 
     mapping(address => uint) public bids;
@@ -19,42 +34,36 @@ contract Auction {
         uint bidEnd;
     }
 
-    struct BidInfo {
-        address bidder;
-        uint bid;
-    }
-
-    BidInfo[] public bidInfo;
     AuctionDetails[] public auctionDetails;
-    INftContract nftContract;
 
     constructor() {
         owner = payable(msg.sender);
     }
 
-    modifier onlyDuringBidding() {
-        require(
-            block.timestamp >= auctionStartTime &&
-                block.timestamp <= auctionEndTime,
-            "Bidding is not currently open"
-        );
-        _;
+    //   modifier onlyDuringBidding() {
+    //         require(block.timestamp >= auctionStartTime && block.timestamp <= auctionEndTime, "Bidding is not currently open");
+    //         _;
+    //     }
+
+    // modifier onlyAfterBidding() {
+    //     require(block.timestamp > auctionEndTime, "Auction: Bidding is still open");
+    //     _;
+    // }
+
+    function getOwner(
+        uint _nftTokenId,
+        uint auctionIndex
+    ) public view returns (address) {
+        NFTAUCTION storage nftauction = nftAuction[auctionIndex];
+        return nftauction.nftContract.ownerOf(_nftTokenId);
     }
 
-    modifier onlyAfterBidding() {
-        require(
-            block.timestamp > auctionEndTime,
-            "Auction: Bidding is still open"
-        );
-        _;
-    }
-
-    function getOwner(uint _nftTokenId) public view returns (address) {
-        return nftContract.ownerOf(_nftTokenId);
-    }
-
-    function _getApproved(uint _tokenId) public view returns (address) {
-        return nftContract.getApproved(_tokenId);
+    function getTokenURI(
+        uint _tokenId,
+        uint auctionIndex
+    ) public view returns (string memory) {
+        NFTAUCTION storage nftauction = nftAuction[auctionIndex];
+        return nftauction.nftContract.tokenURI(_tokenId);
     }
 
     function createAuction(
@@ -62,47 +71,73 @@ contract Auction {
         uint _minBid,
         uint _end,
         uint _start,
-        address nftContractAddress
-    ) public {
-        nftContract = INftContract(nftContractAddress);
+        address nftaddress
+    ) public returns (uint) {
+        NFTAUCTION storage nftauction = nftAuction[numAuctions];
+        nftauction.nftContractAddress = nftaddress;
+        nftauction.nftContract = INftContract(nftauction.nftContractAddress);
         require(
-            nftContract.ownerOf(_nftTokenId) == msg.sender,
+            nftauction.nftContract.ownerOf(_nftTokenId) == msg.sender,
             "Auction: Not Owner of Nft"
         );
-        // nftContract.approve(thisAdress, _nftTokenId);s
-        s_minBid = _minBid;
-        highestBid = _minBid;
-        auctionStartTime = block.timestamp + _start;
-        auctionEndTime = block.timestamp + _end;
-        tokenId = _nftTokenId;
+        nftauction.auctionStartTime = block.timestamp + _start;
+        nftauction.auctionEndTime = block.timestamp + _end;
+        nftauction.highestBid = _minBid;
+        nftauction.tokenId = _nftTokenId;
+        nftauction.tokenURI = getTokenURI(nftauction.tokenId, numAuctions);
+        nftauction.nftName = nftauction.nftContract.name();
+        nftauction.nftSymbol = nftauction.nftContract.symbol();
+        nftauction.nftOwner = nftauction.nftContract.ownerOf(
+            nftauction.tokenId
+        );
+        nftauction.minBid = _minBid;
+        numAuctions++;
+        return numAuctions - 1;
     }
 
-    function placeBid() public payable {
+    function placeBid(uint auctionIndex) public payable {
+        NFTAUCTION storage nftauction = nftAuction[auctionIndex];
         require(
-            msg.value >= highestBid,
+            block.timestamp >= nftauction.auctionStartTime,
+            "Auction: Bidding is currently not open"
+        );
+        require(
+            msg.value >= nftauction.highestBid,
             "Auction: Bid must be greater than highest bid"
         );
-        require(auctionEndTime > block.timestamp, "Auction: Auction over");
-        require(msg.sender != owner, "Auction: Owner can't bid on this NFT");
-        if (highestBidder != address(0)) {
-            bool sent = highestBidder.send(highestBid);
+        require(
+            nftauction.auctionEndTime > block.timestamp,
+            "Auction: Auction over"
+        );
+        require(
+            msg.sender != nftauction.nftContract.ownerOf(nftauction.tokenId),
+            "Auction: Owner can't bid on this NFT"
+        );
+        if (nftauction.highestBidder != address(0)) {
+            bool sent = nftauction.highestBidder.send(nftauction.highestBid);
             require(sent, "Failed to send Eth");
-            // payable(highestBidder).transfer(highestBid);
         }
-        highestBid = msg.value;
-        highestBidder = payable(msg.sender);
+        nftauction.highestBid = msg.value;
+        nftauction.highestBidder = payable(msg.sender);
         bids[msg.sender] = msg.value;
-        bidInfo.push(BidInfo({bidder: msg.sender, bid: msg.value}));
+        nftauction.bidInfo.push(BidInfo({bidder: msg.sender, bid: msg.value}));
     }
 
-    function claim() public onlyAfterBidding {
-        nftContract.transferFrom(owner, highestBidder, tokenId);
-        (bool sent, bytes memory data) = owner.call{value: highestBid}("");
+    function claim(uint auctionIndex) public {
+        NFTAUCTION storage nftauction = nftAuction[auctionIndex];
+        require(
+            block.timestamp >= nftauction.auctionEndTime,
+            "Auction: Auction not over"
+        );
+        nftauction.nftContract.transferFrom(
+            owner,
+            nftauction.highestBidder,
+            nftauction.tokenId
+        );
+        (bool sent, bytes memory data) = owner.call{
+            value: nftauction.highestBid
+        }("");
         require(sent, "Failed to send Ether");
-    }
-
-    function withdraw() public {
-        owner.transfer(highestBid);
     }
 
     receive() external payable {}
@@ -119,26 +154,7 @@ interface INftContract {
     function ownerOf(uint256 tokenId) external view returns (address owner);
 
     /**
-     * @dev Gives permission to `to` to transfer `tokenId` token to another account.
-     * The approval is cleared when the token is transferred.
-     *
-     * Only a single account can be approved at a time, so approving the zero address clears previous approvals.
-     *
-     * Requirements:
-     *
-     * - The caller must own the token or be an approved operator.
-     * - `tokenId` must exist.
-     *
-     * Emits an {Approval} event.
-     */
-    function approve(address to, uint256 tokenId) external;
-
-    /**
      * @dev Transfers `tokenId` token from `from` to `to`.
-     *
-     * WARNING: Note that the caller is responsible to confirm that the recipient is capable of receiving ERC721
-     * or else they may be permanently lost. Usage of {safeTransferFrom} prevents loss, though the caller must
-     * understand this adds an external call which potentially creates a reentrancy vulnerability.
      *
      * Requirements:
      *
@@ -151,17 +167,7 @@ interface INftContract {
      */
     function transferFrom(address from, address to, uint256 tokenId) external;
 
-    /**
-     * @dev Approve or remove `operator` as an operator for the caller.
-     * Operators can call {transferFrom} or {safeTransferFrom} for any token owned by the caller.
-     *
-     * Requirements:
-     *
-     * - The `operator` cannot be the caller.
-     *
-     * Emits an {ApprovalForAll} event.
-     */
-    function setApprovalForAll(address operator, bool approved) external;
+    function tokenURI(uint256 tokenId) external view returns (string memory);
 
     function getApproved(
         uint256 tokenId
@@ -173,4 +179,8 @@ interface INftContract {
         uint256 tokenId,
         bytes calldata data
     ) external;
+
+    function name() external returns (string memory);
+
+    function symbol() external returns (string memory);
 }

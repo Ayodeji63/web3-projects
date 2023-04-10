@@ -9,8 +9,11 @@ import { BigNumber, ethers, utils } from "ethers"
 import {
     getTokensAfterRemove,
     removeLiquidity,
-} from "../../utils/removeLiquidity"
-import { getEtherBalance, getReserveOfCDTokens } from "../../utils/getAmounts"
+} from "../../utils/Exchange/removeLiquidity"
+import {
+    getEtherBalance,
+    getReserveOfCDTokens,
+} from "../../utils/Exchange/getAmounts"
 import { ClipLoader } from "react-spinners"
 const LiquidityPosition = () => {
     const { addLiquidity, setAddLiquidity, lpBalance, provider, getAmounts } =

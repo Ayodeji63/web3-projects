@@ -4,7 +4,7 @@ import {
     EXCHANGE_CONTRACT_ADDRESS,
     TOKEN_CONTRACT_ADDRESS,
     TOKEN_CONTRACT_ABI,
-} from "../constants"
+} from "../../constants"
 
 /**
  * @dev getEtherBalance: Retrieves the ether balance of the user of the contract

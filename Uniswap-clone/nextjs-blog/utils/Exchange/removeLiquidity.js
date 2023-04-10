@@ -4,7 +4,7 @@ import {
     EXCHANGE_CONTRACT_ADDRESS,
     TOKEN_CONTRACT_ABI,
     TOKEN_CONTRACT_ADDRESS,
-} from "../constants"
+} from "../../constants"
 
 /**
  * removeLiquidity: Removes the `removeLPTokensWei` amount of LP tokens from liquidity and also the calculated amount of `ether` and `CD` tokens
