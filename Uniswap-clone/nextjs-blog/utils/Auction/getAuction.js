@@ -21,3 +21,23 @@ export const placeBid = async (provider, bid, auctionIndex) => {
         alert(e.message)
     }
 }
+
+export const getAuctionState = async (provider, auctionIndex) => {
+    try {
+        const auctionContract = getAuctionContractInstance(provider)
+        const startState = await auctionContract.auctionStartState(auctionIndex)
+        return startState
+    } catch (e) {
+        console.error(e.reason)
+    }
+}
+
+export const getAuctionEndState = async (provider, auctionIndex) => {
+    try {
+        const auctionContract = getAuctionContractInstance(provider)
+        const endState = await auctionContract.auctionEndState(auctionIndex)
+        return endState
+    } catch (e) {
+        console.error(e.reason)
+    }
+}

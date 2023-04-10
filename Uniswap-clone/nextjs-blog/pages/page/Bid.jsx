@@ -11,7 +11,12 @@ import { HeartIcon } from "@heroicons/react/24/solid"
 import { ArrowPathIcon, ShareIcon } from "@heroicons/react/24/solid"
 import { utils } from "ethers"
 import FormInput from "../components/FormInput"
-import { placeBid } from "../../utils/Auction/getAuction"
+import {
+    getAuctionEndState,
+    getAuctionState,
+    placeBid,
+} from "../../utils/Auction/getAuction"
+import { getAuction } from "../../utils/Auction/CreateNFT"
 // import {  } from "../";
 export const Bid = () => {
     const [clickedNft, setClickedNFT] = useContext(nftDataContext)
@@ -24,6 +29,25 @@ export const Bid = () => {
         console.log(clickedNft.auctionId)
         await placeBid(provider, bid, clickedNft.auctionId)
     }
+    // setInterval(async () => {
+    //     if (provider) {
+    //         const startState = await getAuctionState(
+    //             provider,
+    //             clickedNft.auctionId
+    //         )
+    //         console.log(
+    //             `Auction ${clickedNft.auctionId} Start State, ${startState}`
+    //         )
+
+    //         const endState = await getAuctionEndState(
+    //             provider,
+    //             clickedNft.auctionId
+    //         )
+    //         console.log(
+    //             `Auction, ${clickedNft.auctionId} End State, ${endState}`
+    //         )
+    //     }
+    // }, 5000)
     return (
         <section className="min-h-screen min-w-screen mb-40 flex">
             <Header />
@@ -74,7 +98,7 @@ export const Bid = () => {
             {/* second-div  */}
             <div className=" w-[35%] px-5 h-full mr-5  flex flex-col top-[15%] right-0 fixed ">
                 <div className="">
-                    <div className="flex items-start  mb-2">
+                    <div className="flex items-center mb-2 ">
                         <Image
                             src={clickedNft.nft_Image[0]}
                             width={50}
@@ -82,20 +106,13 @@ export const Bid = () => {
                             alt="nft-uniswap-logo"
                             className="rounded-full"
                         />
-                        <h1 className="text-white font-medium mt-2 ml-2 text-4xl mb-10 font-small">
+                        <h1 className="text-white font-medium ml-2 text-4xl  font-small">
                             {clickedNft.nft_Name}
                         </h1>
                     </div>
 
                     <div className="mt-2 flex items-center mb-7">
-                        <Image
-                            src={clickedNft.nft_Image[0]}
-                            width={40}
-                            height={40}
-                            alt="eth-logo"
-                            className="rounded-full"
-                        />
-                        <div className="ml-4">
+                        <div className="">
                             <p className="">Current owner</p>
                             <p className="text-white font-medium">
                                 {truncate(clickedNft.nft_Owner)}

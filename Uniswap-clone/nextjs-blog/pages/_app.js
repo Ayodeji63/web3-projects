@@ -3,7 +3,7 @@ import { WagmiConfig, createClient, configureChains, goerli } from "wagmi"
 
 import { avalanche, bsc, mainnet, sepolia } from "wagmi/chains"
 import { publicProvider } from "wagmi/providers/public"
-import { HookProvider, nftDataContext} from "../context/hook"
+import { HookProvider, nftDataContext } from "../context/hook"
 import { useState } from "react"
 
 function MyApp({ Component, pageProps }) {
@@ -11,7 +11,7 @@ function MyApp({ Component, pageProps }) {
     return (
         <HookProvider>
             <nftDataContext.Provider value={[clickedNFT, setClickedNFT]}>
-            <Component {...pageProps} />
+                <Component {...pageProps} />
             </nftDataContext.Provider>
         </HookProvider>
     )

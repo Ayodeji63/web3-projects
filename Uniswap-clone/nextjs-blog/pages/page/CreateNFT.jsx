@@ -76,8 +76,8 @@ const CreateNFT = () => {
             end_Time,
             start_Time
         )
-        console.log(auctionInfo)
         const param = await getParam(provider)
+        console.log(param)
         setClickedNFT(param)
         console.log(clickedNFT)
 

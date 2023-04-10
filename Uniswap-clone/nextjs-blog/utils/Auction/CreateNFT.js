@@ -48,20 +48,26 @@ export const createAuction = async (provider, minBid, endTime, startTime) => {
     const Auction = getAuctionContractInstance(signer)
     const tokenId = await TokenFactory._getTokenId()
     const nftaddress = await TokenFactory.getTokenAddress()
+    console.log(endTime)
+    console.log(startTime)
+    const _startTime = ethers.utils.parseUnits(startTime.toString(), "wei")
+    const _endTime = ethers.utils.parseUnits(endTime.toString(), "wei")
+    console.log(_startTime)
+    console.log(_endTime)
     const crtAuction = await Auction.createAuction(
         tokenId,
         minBid,
-        endTime,
-        startTime,
+        _endTime,
+        _startTime,
         nftaddress
     )
-    crtAuction.wait()
+    await crtAuction.wait()
     const tokenContract = new Contract(nftaddress, TOKEN_ABI, signer)
     const approve = tokenContract.approve(AUCTION_ADDRESS, tokenId)
     console.log(Number(ethers.utils.formatEther(crtAuction.value)))
     const infoNum = Number(ethers.utils.formatEther(crtAuction.value))
     const auctionInfo = await Auction.nftAuction(infoNum)
-    console.log(auctionInfo)
+    // console.log(auctionInfo)
 }
 
 const fetchAuctionById = async (provider, id) => {
@@ -69,6 +75,7 @@ const fetchAuctionById = async (provider, id) => {
         const signer = await provider.getSigner()
         const auctionContract = getAuctionContractInstance(signer)
         const auction = await auctionContract.nftAuction(id)
+        console.log(auction)
         const nft_Image = await fetchMetadata(auction.tokenURI)
         const auctionProposal = {
             auctionId: id,
@@ -80,6 +87,7 @@ const fetchAuctionById = async (provider, id) => {
             nft_price: auction.minBid,
             nft_highestBidder: auction.highestBidder,
             nft_Owner: auction.nftOwner,
+            nft_highestBid: auction.highestBid,
         }
         console.log(auctionProposal)
         return auctionProposal
@@ -136,16 +144,16 @@ const fetchMetadata = async (hash) => {
 }
 
 export const getParam = async (provider) => {
-    const signer = provider.getSigner()
-    const TokenFactory = new Contract(
-        TOKEN_FACTORY_ADDRESS,
-        TOKEN_FACTORY_ABI,
-        signer
-    )
-    const tokenId = await TokenFactory._getTokenId()
+    try {
+        const signer = provider.getSigner()
+        const auctionContract = getAuctionContractInstance(signer)
+        const auctionNum = await auctionContract.numAuctions()
 
-    console.log(parseInt(tokenId))
-    const param = await fetchAuctionById(tokenId)
-
-    return param
+        console.log(parseInt(auctionNum))
+        const param = await fetchAuctionById(provider, parseInt(auctionNum) - 1)
+        console.log(param)
+        return param
+    } catch (e) {
+        console.log(e.reason)
+    }
 }

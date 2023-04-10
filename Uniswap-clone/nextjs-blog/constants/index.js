@@ -846,10 +846,10 @@ export const EXCHANGE_CONTRACT_ABI = [
     },
 ]
 
-export const AUCTION_ADDRESS = "0xD0801B8eA2A95db45A0A3B629b1293B55e805951"
+export const AUCTION_ADDRESS = "0x75930c8fd840f1bDa79b17BA33310Fc75FD3CCdb"
 
 export const TOKEN_FACTORY_ADDRESS =
-    "0x33D1A8d2C734773f5f12DF9dB381e6aA7Cbb3329"
+    "0x2368a43D36bb4054619354F351B0C4510D26b7A1"
 
 export const AUCTION_ABI = [
     {
@@ -881,6 +881,44 @@ export const AUCTION_ABI = [
                 internalType: "uint256",
                 name: "bidEnd",
                 type: "uint256",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "uint256",
+                name: "auctionIndex",
+                type: "uint256",
+            },
+        ],
+        name: "auctionEndState",
+        outputs: [
+            {
+                internalType: "bool",
+                name: "",
+                type: "bool",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "uint256",
+                name: "auctionIndex",
+                type: "uint256",
+            },
+        ],
+        name: "auctionStartState",
+        outputs: [
+            {
+                internalType: "bool",
+                name: "",
+                type: "bool",
             },
         ],
         stateMutability: "view",
