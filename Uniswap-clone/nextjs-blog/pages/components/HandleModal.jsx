@@ -59,9 +59,9 @@ const HandleModal = ({ ethSelected, ethValue, cdtValue, isSwaped }) => {
         }
     }
     return (
-        <div className="before absolute justify-center flex w-screen h-screen">
+        <div className="before z-10 absolute justify-center flex w-screen h-screen">
             <div
-                className="h-[40%] w-[25%] flex justify-start items-center mt-10 flex-col border-[2px]
+                className="h-[40%] w-[25%] flex justify-start items-center mt-60 flex-col border-[2px]
             border-[#50596d] rounded-2xl p-4 bg-[#0b111c] duration-150 transition-all "
             >
                 {render()}

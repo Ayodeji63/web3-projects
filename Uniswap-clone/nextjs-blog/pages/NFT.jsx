@@ -38,6 +38,7 @@ const Nft = () => {
         console.log("Getting Auctions")
         fetch()
     }, [provider])
+
     return (
         <div>
             <Header />
@@ -70,46 +71,51 @@ const Nft = () => {
                         Create NFT
                     </a> */}
                 </div>
-                <div className="nft-cards">
-                    {nftInfo?.map((nft) => (
-                        <div
-                            key={ethers.utils.formatEther(nft.auctionId)}
-                            className="nft-card"
-                            onClick={() => handleClick(nft)}
-                        >
-                            <Image
-                                src={nft.nft_Image[0]}
-                                alt="nft-main-image"
-                                width={100}
-                                height={100}
-                            />
-                            <span className="owner">{}</span>
-                            <h5 className="nft-name">{nft.nft_Name}</h5>
-                            <div className="price-container">
-                                <div className="price">
-                                    <span>Price</span>
-                                    <h5>
-                                        {utils.formatEther(nft.nft_price)} ETH
-                                    </h5>
+                {nftInfo[0] == undefined && (
+                    <div className="nft-cards">
+                        {nftInfo?.map((nft) => (
+                            <div
+                                key={ethers.utils.formatEther(nft.auctionId)}
+                                className="nft-card"
+                                onClick={() => handleClick(nft)}
+                            >
+                                <Image
+                                    src={nft.nft_Image[0]}
+                                    alt="nft-main-image"
+                                    width={100}
+                                    height={100}
+                                />
+                                <span className="owner">{}</span>
+                                <h5 className="nft-name">{nft.nft_Name}</h5>
+                                <div className="price-container">
+                                    <div className="price">
+                                        <span>Price</span>
+                                        <h5>
+                                            {utils.formatEther(nft.nft_price)}{" "}
+                                            ETH
+                                        </h5>
+                                    </div>
+                                    <div className="bid">
+                                        <span>Highest bid</span>
+                                        <h5>
+                                            {utils.formatEther(
+                                                nft.nft_highestBid
+                                            )}{" "}
+                                            ETH
+                                        </h5>
+                                    </div>
                                 </div>
-                                <div className="bid">
-                                    <span>Highest bid</span>
-                                    <h5>
-                                        {utils.formatEther(nft.nft_highestBid)}{" "}
-                                        ETH
-                                    </h5>
+                                <div className="overlay">
+                                    <div className="action-container">
+                                        <button className="action-buy">
+                                            Buy Now
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="overlay">
-                                <div className="action-container">
-                                    <button className="action-buy">
-                                        Buy Now
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     )

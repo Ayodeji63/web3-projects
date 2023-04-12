@@ -40,16 +40,6 @@ contract Auction {
         owner = payable(msg.sender);
     }
 
-    //   modifier onlyDuringBidding() {
-    //         require(block.timestamp >= auctionStartTime && block.timestamp <= auctionEndTime, "Bidding is not currently open");
-    //         _;
-    //     }
-
-    // modifier onlyAfterBidding() {
-    //     require(block.timestamp > auctionEndTime, "Auction: Bidding is still open");
-    //     _;
-    // }
-
     function getOwner(
         uint _nftTokenId,
         uint auctionIndex
@@ -82,7 +72,7 @@ contract Auction {
         );
         nftauction.auctionStartTime = block.timestamp + _start;
         nftauction.auctionEndTime = block.timestamp + _end;
-        nftauction.highestBid = _minBid;
+
         nftauction.tokenId = _nftTokenId;
         nftauction.tokenURI = getTokenURI(nftauction.tokenId, numAuctions);
         nftauction.nftName = nftauction.nftContract.name();
@@ -126,6 +116,14 @@ contract Auction {
     function claim(uint auctionIndex) public {
         NFTAUCTION storage nftauction = nftAuction[auctionIndex];
         require(
+            nftauction.highestBidder != address(0),
+            "Auction: No bid has been placed"
+        );
+        require(
+            msg.sender == nftauction.highestBidder,
+            "Auction: Only highest bidder can call"
+        );
+        require(
             block.timestamp >= nftauction.auctionEndTime,
             "Auction: Auction not over"
         );
@@ -138,6 +136,17 @@ contract Auction {
             value: nftauction.highestBid
         }("");
         require(sent, "Failed to send Ether");
+        nftauction.nftOwner = nftauction.highestBidder;
+    }
+
+    function auctionEndState(uint auctionIndex) public view returns (bool) {
+        NFTAUCTION storage nftauction = nftAuction[auctionIndex];
+        return nftauction.auctionEndTime > block.timestamp;
+    }
+
+    function auctionStartState(uint auctionIndex) public view returns (bool) {
+        NFTAUCTION storage nftauction = nftAuction[auctionIndex];
+        return nftauction.auctionStartTime > block.timestamp;
     }
 
     receive() external payable {}

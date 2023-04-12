@@ -48,12 +48,13 @@ export const createAuction = async (provider, minBid, endTime, startTime) => {
     const Auction = getAuctionContractInstance(signer)
     const tokenId = await TokenFactory._getTokenId()
     const nftaddress = await TokenFactory.getTokenAddress()
-    console.log(endTime)
-    console.log(startTime)
-    const _startTime = ethers.utils.parseUnits(startTime.toString(), "wei")
-    const _endTime = ethers.utils.parseUnits(endTime.toString(), "wei")
+    console.log(nftaddress)
+
+    const _startTime = startTime.toString()
+    const _endTime = endTime.toString()
     console.log(_startTime)
     console.log(_endTime)
+
     const crtAuction = await Auction.createAuction(
         tokenId,
         minBid,
@@ -70,11 +71,12 @@ export const createAuction = async (provider, minBid, endTime, startTime) => {
     // console.log(auctionInfo)
 }
 
-const fetchAuctionById = async (provider, id) => {
+export const fetchAuctionById = async (provider, id) => {
     try {
         const signer = await provider.getSigner()
         const auctionContract = getAuctionContractInstance(signer)
         const auction = await auctionContract.nftAuction(id)
+        auction.wait()
         console.log(auction)
         const nft_Image = await fetchMetadata(auction.tokenURI)
         const auctionProposal = {
@@ -88,6 +90,8 @@ const fetchAuctionById = async (provider, id) => {
             nft_highestBidder: auction.highestBidder,
             nft_Owner: auction.nftOwner,
             nft_highestBid: auction.highestBid,
+            nft_startTime: auction.auctionStartTime,
+            nft_endTime: auction.auctionEndTime,
         }
         console.log(auctionProposal)
         return auctionProposal
@@ -116,7 +120,7 @@ export const fetchAllAuction = async (provider) => {
             const auction = await fetchAuctionById(provider, i)
             auctions.push(auction)
         }
-        // console.log(auctions)
+        console.log(auctions)
         return auctions
     } catch (e) {
         console.error(e)
@@ -137,9 +141,10 @@ const fetchMetadata = async (hash) => {
             // console.log(dataUrl)
             fileResult.push(dataUrl)
         }
+        console.log(fileResult)
         return fileResult
     } catch (e) {
-        alert(e.message)
+        console.log(e.message)
     }
 }
 
@@ -151,9 +156,20 @@ export const getParam = async (provider) => {
 
         console.log(parseInt(auctionNum))
         const param = await fetchAuctionById(provider, parseInt(auctionNum) - 1)
-        console.log(param)
+        // console.log(param)
         return param
     } catch (e) {
         console.log(e.reason)
     }
 }
+
+const today = new Date()
+console.log(today)
+
+const mseconds = today.getTime() + 30
+console.log(mseconds)
+console.log(today.getHours())
+console.log(today.getMinutes() + 30)
+
+const seconds = Math.floor(mseconds / 1000 / 60 / 60 / 24)
+console.log(seconds)

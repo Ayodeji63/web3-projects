@@ -6,7 +6,7 @@ import {
     TOKEN_FACTORY_ABI,
     TOKEN_FACTORY_ADDRESS,
 } from "../../constants"
-import { getAuctionContractInstance } from "./CreateNFT"
+import { fetchAuctionById, getAuctionContractInstance } from "./CreateNFT"
 
 export const placeBid = async (provider, bid, auctionIndex) => {
     try {
@@ -17,8 +17,9 @@ export const placeBid = async (provider, bid, auctionIndex) => {
         const tx = auctionContract.placeBid(auctionIndex, {
             value: setBid,
         })
+        tx.wait(1)
     } catch (e) {
-        alert(e.message)
+        alert(e.reason)
     }
 }
 
@@ -37,6 +38,17 @@ export const getAuctionEndState = async (provider, auctionIndex) => {
         const auctionContract = getAuctionContractInstance(provider)
         const endState = await auctionContract.auctionEndState(auctionIndex)
         return endState
+    } catch (e) {
+        console.error(e.reason)
+    }
+}
+
+export const claim = async (provider, auctionIndex) => {
+    try {
+        const signer = provider.getSigner()
+        const auctionContract = getAuctionContractInstance(signer)
+        const tx = await auctionContract.claim(auctionIndex)
+        tx.wait()
     } catch (e) {
         console.error(e.reason)
     }
