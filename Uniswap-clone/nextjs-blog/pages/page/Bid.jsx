@@ -29,7 +29,7 @@ export const Bid = () => {
     const [endState, setEndState] = useState(false)
     const [loading, setLoading] = useState(false)
     const color = "#fff"
-    const [hideImage, setHideImage] = useState("")
+    const [highest, setHighest] = useState(clickedNft)
 
     setInterval(async () => {
         if (provider) {
@@ -38,18 +38,12 @@ export const Bid = () => {
                 clickedNft.auctionId
             )
             setStartState(_startState)
-            console.log(
-                `Auction ${clickedNft.auctionId} Start State, ${_startState}`
-            )
 
             const _endState = await getAuctionEndState(
                 provider,
                 clickedNft.auctionId
             )
             setEndState(_endState)
-            console.log(
-                `Auction, ${clickedNft.auctionId} End State, ${_endState}`
-            )
         }
     }, 10000)
     const PlaceBid = async () => {
@@ -57,9 +51,10 @@ export const Bid = () => {
             setLoading(true)
             await placeBid(provider, bid, clickedNft.auctionId)
             const fetch = await fetchAuctionById(provider, clickedNft.auctionId)
-            console.log(fetch)
-            setLoading(false)
-            setClickedNFT(fetch)
+            if (fetch !== undefined) {
+                setHighest(fetch)
+                setLoading(false)
+            }
         } catch (e) {
             console.log(e.message)
             setLoading(false)
@@ -126,9 +121,10 @@ export const Bid = () => {
                 </div>
                 {page == "Overview" && (
                     <Overview
-                        highestBidder={clickedNft.nft_highestBidder}
-                        highestBid={clickedNft.nft_highestBid}
-                        owner={clickedNft.nft_Owner}
+                        highestBidder={highest.nft_highestBidder}
+                        highestBid={highest.nft_highestBid}
+                        owner={highest.nft_Owner}
+                        nftContractAdress={clickedNft.nft_address}
                     />
                 )}
                 {page == "Bids" && <Bids />}
@@ -226,12 +222,11 @@ export const Bid = () => {
                         ))}
 
                     {/* {!startState && !endState && } */}
-                    {startState && address != clickedNft.nft_highestBidder && (
-                        <Button text={"Bid Not Open"} />
-                    )}
-
+                    {startState && <Button text={"Bid Not Open"} />}
+                    {!endState && <Button text={"Bid Closed"} />}
                     {!endState &&
                         address === clickedNft.nft_highestBidder &&
+                        clickedNft.nft_Owner != clickedNft.highestBidder &&
                         (!loading ? (
                             <Button text={"Claim"} click={() => claimNft()} />
                         ) : (

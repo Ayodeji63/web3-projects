@@ -1,4 +1,4 @@
-import { Contract, ethers } from "ethers"
+import { Contract, ethers, utils } from "ethers"
 import {
     AUCTION_ABI,
     AUCTION_ADDRESS,
@@ -44,12 +44,13 @@ export const createNFt = async (provider, name, symbol, image, description) => {
 
 export const createAuction = async (provider, minBid, endTime, startTime) => {
     const signer = provider.getSigner()
+
     const TokenFactory = getTokenFactoryContractInstance(signer)
     const Auction = getAuctionContractInstance(signer)
     const tokenId = await TokenFactory._getTokenId()
     const nftaddress = await TokenFactory.getTokenAddress()
     console.log(nftaddress)
-
+    // 0xc2537c5bf9904bd25b42c6f189469f5b6c1f6f24
     const _startTime = startTime.toString()
     const _endTime = endTime.toString()
     console.log(_startTime)
@@ -63,21 +64,44 @@ export const createAuction = async (provider, minBid, endTime, startTime) => {
         nftaddress
     )
     await crtAuction.wait()
-    const tokenContract = new Contract(nftaddress, TOKEN_ABI, signer)
-    const approve = tokenContract.approve(AUCTION_ADDRESS, tokenId)
     console.log(Number(ethers.utils.formatEther(crtAuction.value)))
     const infoNum = Number(ethers.utils.formatEther(crtAuction.value))
     const auctionInfo = await Auction.nftAuction(infoNum)
     // console.log(auctionInfo)
 }
 
+export const approveAuction = async (provider, address) => {
+    try {
+        const signer = provider.getSigner()
+        const TokenFactory = getTokenFactoryContractInstance(signer)
+        const nftaddress = await TokenFactory.getTokenAddress()
+        console.log(nftaddress)
+        const tokenId = await TokenFactory._getTokenId()
+        console.log(utils.formatEther(tokenId))
+        console.log(address)
+        const tokenContract = new Contract(nftaddress, TOKEN_ABI, signer)
+        const tx = await tokenContract.transferFrom(
+            address,
+            AUCTION_ADDRESS,
+            tokenId
+        )
+        tx.wait()
+        // const gptx = await tokenContract.getApproved(tokenId)
+        gptx.wait()
+        console.log(gptx)
+    } catch (e) {
+        console.log(e.message)
+    }
+}
+// 0xaac8b8ad66984140e70792aba0c29d41da9951dc
+
 export const fetchAuctionById = async (provider, id) => {
     try {
         const signer = await provider.getSigner()
         const auctionContract = getAuctionContractInstance(signer)
         const auction = await auctionContract.nftAuction(id)
-        auction.wait()
         console.log(auction)
+        // auction.wait()
         const nft_Image = await fetchMetadata(auction.tokenURI)
         const auctionProposal = {
             auctionId: id,
@@ -92,8 +116,8 @@ export const fetchAuctionById = async (provider, id) => {
             nft_highestBid: auction.highestBid,
             nft_startTime: auction.auctionStartTime,
             nft_endTime: auction.auctionEndTime,
+            nft_address: auction.contractAddress,
         }
-        console.log(auctionProposal)
         return auctionProposal
     } catch (e) {
         console.error(e.reason)
@@ -162,14 +186,3 @@ export const getParam = async (provider) => {
         console.log(e.reason)
     }
 }
-
-const today = new Date()
-console.log(today)
-
-const mseconds = today.getTime() + 30
-console.log(mseconds)
-console.log(today.getHours())
-console.log(today.getMinutes() + 30)
-
-const seconds = Math.floor(mseconds / 1000 / 60 / 60 / 24)
-console.log(seconds)

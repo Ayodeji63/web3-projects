@@ -11,6 +11,7 @@ import { pink } from "@mui/material/colors"
 import Switch from "@mui/material/Switch"
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material"
 import {
+    approveAuction,
     createAuction,
     createNFt,
     fetchAllAuction,
@@ -39,6 +40,7 @@ const CreateNFT = () => {
     const router = useRouter()
     let [clickedNFT, setClickedNFT] = useContext(nftDataContext)
     const [loading, setLoading] = useState(false)
+    const [loadingText, setLoadingText] = useState("")
     const color = "#fff"
 
     const addImage = async (e) => {
@@ -58,6 +60,7 @@ const CreateNFT = () => {
     const handleClick = async () => {
         try {
             setLoading(true)
+            setLoadingText("Creating Nft...")
             const create = await createNFt(
                 provider,
                 name,
@@ -71,19 +74,22 @@ const CreateNFT = () => {
             console.log(_minBid)
             console.log(endTime)
             console.log(startTime)
+            setLoadingText("Creating Auction..")
             const auctionInfo = await createAuction(
                 provider,
                 _minBid,
                 endTime,
                 startTime
             )
+            setLoadingText("Approving Contract...")
+            await approveAuction(provider, address)
             const param = await getParam(provider)
             console.log(param)
             setClickedNFT(param)
             console.log(clickedNFT)
             setLoading(false)
 
-            // router.push("/page/Bid")
+            router.push("/page/Bid")
         } catch (e) {
             alert(e.message)
             setLoading(false)
@@ -262,13 +268,16 @@ const CreateNFT = () => {
                         ) : (
                             <Button
                                 text={
-                                    <ClipLoader
-                                        color={color}
-                                        loading={loading}
-                                        size={30}
-                                        aria-label="Loading Spinner"
-                                        data-testid="loader"
-                                    />
+                                    <div className="flex">
+                                        <ClipLoader
+                                            color={color}
+                                            loading={loading}
+                                            size={30}
+                                            aria-label="Loading Spinner"
+                                            data-testid="loader"
+                                        />
+                                        <p className="mr-2">{loadingText}</p>
+                                    </div>
                                 }
                             />
                         )}

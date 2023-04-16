@@ -6,6 +6,8 @@ contract TokenFactory {
     Token[] public TokenFactoryArray;
     address[] public Owner;
     mapping(address => uint) public indexArry;
+    uint public tokenAddressIndex;
+    event TokenCreated(string _name, string _symbol, address owner);
 
     function createNewToken(
         string memory name,
@@ -15,11 +17,13 @@ contract TokenFactory {
         Token newToken = new Token(name, symbol);
         TokenFactoryArray.push(newToken);
         indexArry[msg.sender] = TokenFactoryArray.length - 1;
+        tokenAddressIndex = TokenFactoryArray.length - 1;
         Token(address(TokenFactoryArray[indexArry[msg.sender]])).safeMint(
             msg.sender,
             uri
         );
         Owner.push(msg.sender);
+        emit TokenCreated(name, symbol, msg.sender);
     }
 
     function getTokenAddress() public view returns (address) {
@@ -32,6 +36,11 @@ contract TokenFactory {
             msg.sender,
             uri
         );
+    }
+
+    function _setAprroveForAll(address operator) public {
+        Token(address(TokenFactoryArray[indexArry[msg.sender]]))
+            .setApprovalForAll(operator, true);
     }
 
     function _getTokenId() public view returns (uint) {
@@ -47,21 +56,7 @@ contract TokenFactory {
             );
     }
 
-    function getName() public view returns (string memory) {
-        return Token(address(TokenFactoryArray[indexArry[msg.sender]])).name();
-    }
-
-    function getSymbol() public view returns (string memory) {
-        return
-            Token(address(TokenFactoryArray[indexArry[msg.sender]])).symbol();
-    }
-
-    function getOwner(uint tokenId) public view returns (address) {
-        return
-            Token(address(TokenFactoryArray[indexArry[msg.sender]])).ownerOf(
-                tokenId
-            );
-    }
+    //    setApprovalForAll(operator, _approved)
 }
 // 0xa74f4a305867c7EfcF9DE4Cf51B3398AEbE1a129
 // 0xEDA8048fFa71a5d11EAa1966fc650B4df960F1B6

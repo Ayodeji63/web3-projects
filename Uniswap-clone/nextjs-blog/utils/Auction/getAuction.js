@@ -19,7 +19,7 @@ export const placeBid = async (provider, bid, auctionIndex) => {
         })
         tx.wait(1)
     } catch (e) {
-        alert(e.reason)
+        console.log(e.reason)
     }
 }
 
@@ -45,6 +45,7 @@ export const getAuctionEndState = async (provider, auctionIndex) => {
 
 export const claim = async (provider, auctionIndex) => {
     try {
+        console.log(auctionIndex)
         const signer = provider.getSigner()
         const auctionContract = getAuctionContractInstance(signer)
         const tx = await auctionContract.claim(auctionIndex)

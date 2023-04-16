@@ -10,20 +10,32 @@ import { useEffect } from "react"
 import { fetchAllAuction } from "../utils/Auction/CreateNFT"
 import { ethers, utils } from "ethers"
 import Button from "./components/Button"
+import { ClipLoader } from "react-spinners"
 
 const Nft = () => {
     const href = CreateNFT
     const router = useRouter()
     const [nftInfo, setNftInfo] = useState([])
-    const { provider } = useContext(HookContext)
+    const { provider, connectWallet, address } = useContext(HookContext)
     let [clickedNFT, setClickedNFT] = useContext(nftDataContext)
+    const [loading, setloading] = useState(false)
     const handleClick = (nft) => {
         console.log("pushed")
         setClickedNFT(nft)
         console.log(nft)
         router.push(`/page/Bid?${nft.id}`)
     }
+    const color = "#fff"
 
+    const connect = async () => {
+        try {
+            setloading(true)
+            await connectWallet()
+            setloading(false)
+        } catch (e) {
+            console.log(e.message)
+        }
+    }
     const createPush = () => {
         router.push("/page/CreateNFT")
     }
@@ -32,6 +44,8 @@ const Nft = () => {
         const data = await fetchAllAuction(provider)
         console.log(data)
         setNftInfo(data)
+
+        nftInfo.sort((a, b) => b.auctionId - a.auctionId)
     }
 
     useEffect(() => {
@@ -71,7 +85,7 @@ const Nft = () => {
                         Create NFT
                     </a> */}
                 </div>
-                {nftInfo[0] == undefined && (
+                {nftInfo.length != 0 ? (
                     <div className="nft-cards">
                         {nftInfo?.map((nft) => (
                             <div
@@ -115,6 +129,29 @@ const Nft = () => {
                             </div>
                         ))}
                     </div>
+                ) : (
+                    // <div className="nft-cards flex flex-col">
+                    //     <h1>Connect Your Wallet</h1>
+                    //     <div className="w-[20%]">
+                    //         <Button
+                    //             text={
+                    //                 !loading ? (
+                    //                     "Connect Wallet"
+                    //                 ) : (
+                    //                     <ClipLoader
+                    //                         color={color}
+                    //                         loading={loading}
+                    //                         size={30}
+                    //                         aria-label="Loading Spinner"
+                    //                         data-testid="loader"
+                    //                     />
+                    //                 )
+                    //             }
+                    //             click={() => connect()}
+                    //         />
+                    //     </div>
+                    // </div>
+                    ""
                 )}
             </div>
         </div>

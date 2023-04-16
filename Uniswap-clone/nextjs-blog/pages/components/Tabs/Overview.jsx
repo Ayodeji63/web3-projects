@@ -11,10 +11,9 @@ import {
 import { ArrowPathIcon } from "@heroicons/react/24/outline"
 import { BigNumber, utils } from "ethers"
 
-const Overview = ({ highestBidder, highestBid, owner }) => {
+const Overview = ({ highestBidder, highestBid, owner, nftAddress }) => {
     const { address } = useContext(HookContext)
     const zero = BigNumber.from(0)
-    console.log(zero)
     return (
         <div className="mt-10 scrollbar-hide w-full mb-40">
             <h1 className="text-white text-2xl font-medium">Latest Bids</h1>
@@ -57,7 +56,7 @@ const Overview = ({ highestBidder, highestBid, owner }) => {
                     <div className="flex flex-col justify-between w-full ml-2">
                         <div className="flex justify-between">
                             <p className="text-white text-base font-medium">
-                                {truncate(owner)}
+                                {nftAddress}
                             </p>
                             <p className="text-white text-base font-medium">
                                 100%
