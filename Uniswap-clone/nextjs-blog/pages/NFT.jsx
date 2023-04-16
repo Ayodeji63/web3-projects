@@ -10,20 +10,32 @@ import { useEffect } from "react"
 import { fetchAllAuction } from "../utils/Auction/CreateNFT"
 import { ethers, utils } from "ethers"
 import Button from "./components/Button"
+import { ClipLoader } from "react-spinners"
 
 const Nft = () => {
     const href = CreateNFT
     const router = useRouter()
     const [nftInfo, setNftInfo] = useState([])
-    const { provider } = useContext(HookContext)
+    const { provider, connectWallet, address } = useContext(HookContext)
     let [clickedNFT, setClickedNFT] = useContext(nftDataContext)
+    const [loading, setloading] = useState(false)
     const handleClick = (nft) => {
         console.log("pushed")
         setClickedNFT(nft)
         console.log(nft)
         router.push(`/page/Bid?${nft.id}`)
     }
+    const color = "#fff"
 
+    const connect = async () => {
+        try {
+            setloading(true)
+            await connectWallet()
+            setloading(false)
+        } catch (e) {
+            console.log(e.message)
+        }
+    }
     const createPush = () => {
         router.push("/page/CreateNFT")
     }
@@ -32,12 +44,15 @@ const Nft = () => {
         const data = await fetchAllAuction(provider)
         console.log(data)
         setNftInfo(data)
+
+        nftInfo.sort((a, b) => b.auctionId - a.auctionId)
     }
 
     useEffect(() => {
         console.log("Getting Auctions")
         fetch()
     }, [provider])
+
     return (
         <div>
             <Header />
@@ -70,46 +85,74 @@ const Nft = () => {
                         Create NFT
                     </a> */}
                 </div>
-                <div className="nft-cards">
-                    {nftInfo?.map((nft) => (
-                        <div
-                            key={ethers.utils.formatEther(nft.auctionId)}
-                            className="nft-card"
-                            onClick={() => handleClick(nft)}
-                        >
-                            <Image
-                                src={nft.nft_Image[0]}
-                                alt="nft-main-image"
-                                width={100}
-                                height={100}
-                            />
-                            <span className="owner">{}</span>
-                            <h5 className="nft-name">{nft.nft_Name}</h5>
-                            <div className="price-container">
-                                <div className="price">
-                                    <span>Price</span>
-                                    <h5>
-                                        {utils.formatEther(nft.nft_price)} ETH
-                                    </h5>
+                {nftInfo.length != 0 ? (
+                    <div className="nft-cards">
+                        {nftInfo?.map((nft) => (
+                            <div
+                                key={ethers.utils.formatEther(nft.auctionId)}
+                                className="nft-card"
+                                onClick={() => handleClick(nft)}
+                            >
+                                <Image
+                                    src={nft.nft_Image[0]}
+                                    alt="nft-main-image"
+                                    width={100}
+                                    height={100}
+                                />
+                                <span className="owner">{}</span>
+                                <h5 className="nft-name">{nft.nft_Name}</h5>
+                                <div className="price-container">
+                                    <div className="price">
+                                        <span>Price</span>
+                                        <h5>
+                                            {utils.formatEther(nft.nft_price)}{" "}
+                                            ETH
+                                        </h5>
+                                    </div>
+                                    <div className="bid">
+                                        <span>Highest bid</span>
+                                        <h5>
+                                            {utils.formatEther(
+                                                nft.nft_highestBid
+                                            )}{" "}
+                                            ETH
+                                        </h5>
+                                    </div>
                                 </div>
-                                <div className="bid">
-                                    <span>Highest bid</span>
-                                    <h5>
-                                        {utils.formatEther(nft.nft_highestBid)}{" "}
-                                        ETH
-                                    </h5>
+                                <div className="overlay">
+                                    <div className="action-container">
+                                        <button className="action-buy">
+                                            Buy Now
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="overlay">
-                                <div className="action-container">
-                                    <button className="action-buy">
-                                        Buy Now
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                ) : (
+                    // <div className="nft-cards flex flex-col">
+                    //     <h1>Connect Your Wallet</h1>
+                    //     <div className="w-[20%]">
+                    //         <Button
+                    //             text={
+                    //                 !loading ? (
+                    //                     "Connect Wallet"
+                    //                 ) : (
+                    //                     <ClipLoader
+                    //                         color={color}
+                    //                         loading={loading}
+                    //                         size={30}
+                    //                         aria-label="Loading Spinner"
+                    //                         data-testid="loader"
+                    //                     />
+                    //                 )
+                    //             }
+                    //             click={() => connect()}
+                    //         />
+                    //     </div>
+                    // </div>
+                    ""
+                )}
             </div>
         </div>
     )

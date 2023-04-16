@@ -11,6 +11,7 @@ import { pink } from "@mui/material/colors"
 import Switch from "@mui/material/Switch"
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material"
 import {
+    approveAuction,
     createAuction,
     createNFt,
     fetchAllAuction,
@@ -21,6 +22,7 @@ import Header from "../components/Header"
 import { BigNumber, ethers, utils } from "ethers"
 import { useRouter } from "next/router"
 import { parseEther } from "ethers/lib/utils.js"
+import { ClipLoader } from "react-spinners"
 
 const CreateNFT = () => {
     const label = { inputProps: { "aria-label": "Color switch demo" } }
@@ -37,6 +39,9 @@ const CreateNFT = () => {
     const [bid, setBid] = useState(zero)
     const router = useRouter()
     let [clickedNFT, setClickedNFT] = useContext(nftDataContext)
+    const [loading, setLoading] = useState(false)
+    const [loadingText, setLoadingText] = useState("")
+    const color = "#fff"
 
     const addImage = async (e) => {
         const reader = new FileReader()
@@ -53,35 +58,42 @@ const CreateNFT = () => {
     }
 
     const handleClick = async () => {
-        const create = await createNFt(
-            provider,
-            name,
-            symbol,
-            nftImage,
-            description
-        )
-        console.log(create)
+        try {
+            setLoading(true)
+            setLoadingText("Creating Nft...")
+            const create = await createNFt(
+                provider,
+                name,
+                symbol,
+                nftImage,
+                description
+            )
+            console.log(create)
 
-        const _minBid = parseEther(bid)
-        console.log(_minBid)
-        console.log(endTime)
-        const end_Time = utils.parseEther(String(endTime))
-        console.log(end_Time)
-        console.log(startTime)
-        const start_Time = utils.parseEther(String(startTime))
-        console.log(start_Time)
-        const auctionInfo = await createAuction(
-            provider,
-            _minBid,
-            end_Time,
-            start_Time
-        )
-        const param = await getParam(provider)
-        console.log(param)
-        setClickedNFT(param)
-        console.log(clickedNFT)
+            const _minBid = parseEther(bid)
+            console.log(_minBid)
+            console.log(endTime)
+            console.log(startTime)
+            setLoadingText("Creating Auction..")
+            const auctionInfo = await createAuction(
+                provider,
+                _minBid,
+                endTime,
+                startTime
+            )
+            setLoadingText("Approving Contract...")
+            await approveAuction(provider, address)
+            const param = await getParam(provider)
+            console.log(param)
+            setClickedNFT(param)
+            console.log(clickedNFT)
+            setLoading(false)
 
-        router.push("/page/Bid")
+            router.push("/page/Bid")
+        } catch (e) {
+            alert(e.message)
+            setLoading(false)
+        }
     }
     return (
         <div>
@@ -221,6 +233,8 @@ const CreateNFT = () => {
                             <MenuItem value={0}>Now</MenuItem>
                             <MenuItem value={20}>20sec</MenuItem>
                             <MenuItem value={30}>30sec</MenuItem>
+                            <MenuItem value={40}>40sec</MenuItem>
+                            <MenuItem value={50}>50sec</MenuItem>
                         </Select>
                     </FormControl>
                     <FormControl className="w-[45%] ml-3 bg-[#0b111c] rounded-2xl text-white">
@@ -241,13 +255,32 @@ const CreateNFT = () => {
                             <MenuItem value={150}>150sec</MenuItem>
                             <MenuItem value={200}>200sec</MenuItem>
                             <MenuItem value={300}>300sec</MenuItem>
+                            <MenuItem value={400}>400sec</MenuItem>
+                            <MenuItem value={500}>500sec</MenuItem>
                         </Select>
                     </FormControl>
                     <div className="mt-10 mb-20">
-                        <Button
-                            text={"Create Collection"}
-                            click={() => handleClick()}
-                        />
+                        {!loading ? (
+                            <Button
+                                text={"Create Collection"}
+                                click={() => handleClick()}
+                            />
+                        ) : (
+                            <Button
+                                text={
+                                    <div className="flex">
+                                        <ClipLoader
+                                            color={color}
+                                            loading={loading}
+                                            size={30}
+                                            aria-label="Loading Spinner"
+                                            data-testid="loader"
+                                        />
+                                        <p className="mr-2">{loadingText}</p>
+                                    </div>
+                                }
+                            />
+                        )}
                     </div>
                 </div>
                 {/* Preview NFT image  */}

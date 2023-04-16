@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
+import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 
-contract Auction {
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+
+contract Auction is ERC721Holder {
     struct BidInfo {
         address bidder;
         uint bid;
@@ -12,14 +15,13 @@ contract Auction {
         uint auctionStartTime;
         uint minBid;
         uint highestBid;
-        address nftContractAddress;
+        address contractAddress;
         address payable highestBidder;
         string tokenURI;
         string nftName;
         string nftSymbol;
         address nftOwner;
         BidInfo[] bidInfo;
-        INftContract nftContract;
     }
 
     mapping(uint => NFTAUCTION) public nftAuction;
@@ -34,36 +36,36 @@ contract Auction {
         uint bidEnd;
     }
 
+    event AuctionCreated(
+        uint _auctionIndex,
+        uint nftTokenId,
+        address nftAddress,
+        uint minBid,
+        uint end,
+        uint start
+    );
     AuctionDetails[] public auctionDetails;
 
     constructor() {
         owner = payable(msg.sender);
     }
 
-    //   modifier onlyDuringBidding() {
-    //         require(block.timestamp >= auctionStartTime && block.timestamp <= auctionEndTime, "Bidding is not currently open");
-    //         _;
-    //     }
-
-    // modifier onlyAfterBidding() {
-    //     require(block.timestamp > auctionEndTime, "Auction: Bidding is still open");
-    //     _;
-    // }
-
     function getOwner(
         uint _nftTokenId,
         uint auctionIndex
     ) public view returns (address) {
-        NFTAUCTION storage nftauction = nftAuction[auctionIndex];
-        return nftauction.nftContract.ownerOf(_nftTokenId);
+        NFTAUCTION storage auction = nftAuction[auctionIndex];
+        INftContract nftContract = INftContract(auction.contractAddress);
+        return nftContract.ownerOf(_nftTokenId);
     }
 
     function getTokenURI(
         uint _tokenId,
         uint auctionIndex
     ) public view returns (string memory) {
-        NFTAUCTION storage nftauction = nftAuction[auctionIndex];
-        return nftauction.nftContract.tokenURI(_tokenId);
+        NFTAUCTION storage auction = nftAuction[auctionIndex];
+        INftContract nftContract = INftContract(auction.contractAddress);
+        return nftContract.tokenURI(_tokenId);
     }
 
     function createAuction(
@@ -73,71 +75,109 @@ contract Auction {
         uint _start,
         address nftaddress
     ) public returns (uint) {
-        NFTAUCTION storage nftauction = nftAuction[numAuctions];
-        nftauction.nftContractAddress = nftaddress;
-        nftauction.nftContract = INftContract(nftauction.nftContractAddress);
+        require(_end > _start, "Auction End time must be after start time");
+        require(_minBid > 0, "Auction: Minimum Bid must be greater than 0");
+
+        INftContract nftContract = INftContract(nftaddress);
+        uint auctionIndex = numAuctions;
+
+        NFTAUCTION storage auction = nftAuction[auctionIndex];
+
         require(
-            nftauction.nftContract.ownerOf(_nftTokenId) == msg.sender,
+            nftContract.ownerOf(_nftTokenId) == msg.sender,
             "Auction: Not Owner of Nft"
         );
-        nftauction.auctionStartTime = block.timestamp + _start;
-        nftauction.auctionEndTime = block.timestamp + _end;
-        nftauction.highestBid = _minBid;
-        nftauction.tokenId = _nftTokenId;
-        nftauction.tokenURI = getTokenURI(nftauction.tokenId, numAuctions);
-        nftauction.nftName = nftauction.nftContract.name();
-        nftauction.nftSymbol = nftauction.nftContract.symbol();
-        nftauction.nftOwner = nftauction.nftContract.ownerOf(
-            nftauction.tokenId
+
+        auction.tokenId = _nftTokenId;
+        auction.tokenURI = nftContract.tokenURI(_nftTokenId);
+        auction.nftName = nftContract.name();
+        auction.nftSymbol = nftContract.symbol();
+        auction.nftOwner = nftContract.ownerOf(_nftTokenId);
+        auction.minBid = _minBid;
+        auction.auctionStartTime = block.timestamp + _start;
+        auction.auctionEndTime = block.timestamp + _end;
+        auction.contractAddress = nftaddress;
+
+        emit AuctionCreated(
+            auctionIndex,
+            _nftTokenId,
+            nftaddress,
+            _minBid,
+            _end,
+            _start
         );
-        nftauction.minBid = _minBid;
         numAuctions++;
+
         return numAuctions - 1;
     }
 
     function placeBid(uint auctionIndex) public payable {
-        NFTAUCTION storage nftauction = nftAuction[auctionIndex];
+        NFTAUCTION storage auction = nftAuction[auctionIndex];
+
+        INftContract nftContract = INftContract(auction.contractAddress);
         require(
-            block.timestamp >= nftauction.auctionStartTime,
+            block.timestamp >= auction.auctionStartTime,
             "Auction: Bidding is currently not open"
         );
         require(
-            msg.value >= nftauction.highestBid,
+            msg.value >= auction.highestBid,
             "Auction: Bid must be greater than highest bid"
         );
         require(
-            nftauction.auctionEndTime > block.timestamp,
+            auction.auctionEndTime > block.timestamp,
             "Auction: Auction over"
         );
         require(
-            msg.sender != nftauction.nftContract.ownerOf(nftauction.tokenId),
+            msg.sender != nftContract.ownerOf(auction.tokenId),
             "Auction: Owner can't bid on this NFT"
         );
-        if (nftauction.highestBidder != address(0)) {
-            bool sent = nftauction.highestBidder.send(nftauction.highestBid);
+        if (auction.highestBidder != address(0)) {
+            bool sent = auction.highestBidder.send(auction.highestBid);
             require(sent, "Failed to send Eth");
         }
-        nftauction.highestBid = msg.value;
-        nftauction.highestBidder = payable(msg.sender);
+        auction.highestBid = msg.value;
+        auction.highestBidder = payable(msg.sender);
         bids[msg.sender] = msg.value;
-        nftauction.bidInfo.push(BidInfo({bidder: msg.sender, bid: msg.value}));
+        auction.bidInfo.push(BidInfo({bidder: msg.sender, bid: msg.value}));
     }
 
     function claim(uint auctionIndex) public {
-        NFTAUCTION storage nftauction = nftAuction[auctionIndex];
+        NFTAUCTION storage auction = nftAuction[auctionIndex];
+        INftContract nftContract = INftContract(auction.contractAddress);
         require(
-            block.timestamp >= nftauction.auctionEndTime,
+            auction.highestBidder != address(0),
+            "Auction: No bid has been placed"
+        );
+        require(
+            msg.sender == auction.highestBidder,
+            "Auction: Only highest bidder can call"
+        );
+        require(
+            block.timestamp >= auction.auctionEndTime,
             "Auction: Auction not over"
         );
-        nftauction.nftContract.transferFrom(
-            owner,
-            nftauction.highestBidder,
-            nftauction.tokenId
+        nftContract.safeTransferFrom(
+            address(this),
+            auction.highestBidder,
+            auction.tokenId,
+            ""
         );
-        (bool sent, bytes memory data) = owner.call{
-            value: nftauction.highestBid
-        }("");
+
+        (bool sent, bytes memory data) = owner.call{value: auction.highestBid}(
+            ""
+        );
         require(sent, "Failed to send Ether");
+        auction.nftOwner = auction.highestBidder;
+    }
+
+    function auctionEndState(uint auctionIndex) public view returns (bool) {
+        NFTAUCTION storage auction = nftAuction[auctionIndex];
+        return auction.auctionEndTime > block.timestamp;
+    }
+
+    function auctionStartState(uint auctionIndex) public view returns (bool) {
+        NFTAUCTION storage auction = nftAuction[auctionIndex];
+        return auction.auctionStartTime > block.timestamp;
     }
 
     receive() external payable {}

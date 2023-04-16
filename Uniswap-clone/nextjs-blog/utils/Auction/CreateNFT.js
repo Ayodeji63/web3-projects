@@ -1,4 +1,4 @@
-import { Contract, ethers } from "ethers"
+import { Contract, ethers, utils } from "ethers"
 import {
     AUCTION_ABI,
     AUCTION_ADDRESS,
@@ -44,16 +44,18 @@ export const createNFt = async (provider, name, symbol, image, description) => {
 
 export const createAuction = async (provider, minBid, endTime, startTime) => {
     const signer = provider.getSigner()
+
     const TokenFactory = getTokenFactoryContractInstance(signer)
     const Auction = getAuctionContractInstance(signer)
     const tokenId = await TokenFactory._getTokenId()
     const nftaddress = await TokenFactory.getTokenAddress()
-    console.log(endTime)
-    console.log(startTime)
-    const _startTime = ethers.utils.parseUnits(startTime.toString(), "wei")
-    const _endTime = ethers.utils.parseUnits(endTime.toString(), "wei")
+    console.log(nftaddress)
+    // 0xc2537c5bf9904bd25b42c6f189469f5b6c1f6f24
+    const _startTime = startTime.toString()
+    const _endTime = endTime.toString()
     console.log(_startTime)
     console.log(_endTime)
+
     const crtAuction = await Auction.createAuction(
         tokenId,
         minBid,
@@ -62,20 +64,44 @@ export const createAuction = async (provider, minBid, endTime, startTime) => {
         nftaddress
     )
     await crtAuction.wait()
-    const tokenContract = new Contract(nftaddress, TOKEN_ABI, signer)
-    const approve = tokenContract.approve(AUCTION_ADDRESS, tokenId)
     console.log(Number(ethers.utils.formatEther(crtAuction.value)))
     const infoNum = Number(ethers.utils.formatEther(crtAuction.value))
     const auctionInfo = await Auction.nftAuction(infoNum)
     // console.log(auctionInfo)
 }
 
-const fetchAuctionById = async (provider, id) => {
+export const approveAuction = async (provider, address) => {
+    try {
+        const signer = provider.getSigner()
+        const TokenFactory = getTokenFactoryContractInstance(signer)
+        const nftaddress = await TokenFactory.getTokenAddress()
+        console.log(nftaddress)
+        const tokenId = await TokenFactory._getTokenId()
+        console.log(utils.formatEther(tokenId))
+        console.log(address)
+        const tokenContract = new Contract(nftaddress, TOKEN_ABI, signer)
+        const tx = await tokenContract.transferFrom(
+            address,
+            AUCTION_ADDRESS,
+            tokenId
+        )
+        tx.wait()
+        // const gptx = await tokenContract.getApproved(tokenId)
+        gptx.wait()
+        console.log(gptx)
+    } catch (e) {
+        console.log(e.message)
+    }
+}
+// 0xaac8b8ad66984140e70792aba0c29d41da9951dc
+
+export const fetchAuctionById = async (provider, id) => {
     try {
         const signer = await provider.getSigner()
         const auctionContract = getAuctionContractInstance(signer)
         const auction = await auctionContract.nftAuction(id)
         console.log(auction)
+        // auction.wait()
         const nft_Image = await fetchMetadata(auction.tokenURI)
         const auctionProposal = {
             auctionId: id,
@@ -88,8 +114,10 @@ const fetchAuctionById = async (provider, id) => {
             nft_highestBidder: auction.highestBidder,
             nft_Owner: auction.nftOwner,
             nft_highestBid: auction.highestBid,
+            nft_startTime: auction.auctionStartTime,
+            nft_endTime: auction.auctionEndTime,
+            nft_address: auction.contractAddress,
         }
-        console.log(auctionProposal)
         return auctionProposal
     } catch (e) {
         console.error(e.reason)
@@ -116,7 +144,7 @@ export const fetchAllAuction = async (provider) => {
             const auction = await fetchAuctionById(provider, i)
             auctions.push(auction)
         }
-        // console.log(auctions)
+        console.log(auctions)
         return auctions
     } catch (e) {
         console.error(e)
@@ -137,9 +165,10 @@ const fetchMetadata = async (hash) => {
             // console.log(dataUrl)
             fileResult.push(dataUrl)
         }
+        console.log(fileResult)
         return fileResult
     } catch (e) {
-        alert(e.message)
+        console.log(e.message)
     }
 }
 
@@ -151,7 +180,7 @@ export const getParam = async (provider) => {
 
         console.log(parseInt(auctionNum))
         const param = await fetchAuctionById(provider, parseInt(auctionNum) - 1)
-        console.log(param)
+        // console.log(param)
         return param
     } catch (e) {
         console.log(e.reason)

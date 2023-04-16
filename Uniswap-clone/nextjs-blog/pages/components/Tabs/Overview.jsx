@@ -9,15 +9,38 @@ import {
     EyeIcon,
 } from "@heroicons/react/24/solid"
 import { ArrowPathIcon } from "@heroicons/react/24/outline"
+import { BigNumber, utils } from "ethers"
 
-const Overview = () => {
+const Overview = ({ highestBidder, highestBid, owner, nftAddress }) => {
     const { address } = useContext(HookContext)
+    const zero = BigNumber.from(0)
     return (
         <div className="mt-10 scrollbar-hide w-full mb-40">
             <h1 className="text-white text-2xl font-medium">Latest Bids</h1>
 
             <div className="w-full border-[1px] border-[#1c2231] rounded-xl mt-5 p-5">
-                <p>No bids yet. Be the first to place a bid</p>
+                {highestBid != 0.0 ? (
+                    <div className="flex items-center justify-between w-full">
+                        <div className="flex items-center">
+                            <Image
+                                src={"/background.webp"}
+                                height={50}
+                                width={50}
+                                className="rounded-full h-10 w-10 object-cover"
+                            />
+                            <p className="text-white text-xl ml-2 font-medium">
+                                {truncate(highestBidder)}
+                            </p>
+                        </div>
+                        <p className="text-white text-xl font-medium">
+                            {utils.formatEther(highestBid)} ETH
+                        </p>
+                    </div>
+                ) : (
+                    <div>
+                        <p>No bids, be the first to bid</p>
+                    </div>
+                )}
             </div>
 
             <div className="mt-10">
@@ -33,7 +56,7 @@ const Overview = () => {
                     <div className="flex flex-col justify-between w-full ml-2">
                         <div className="flex justify-between">
                             <p className="text-white text-base font-medium">
-                                {truncate(address)}
+                                {nftAddress}
                             </p>
                             <p className="text-white text-base font-medium">
                                 100%

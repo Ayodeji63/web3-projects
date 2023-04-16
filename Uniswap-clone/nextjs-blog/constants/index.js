@@ -846,16 +846,59 @@ export const EXCHANGE_CONTRACT_ABI = [
     },
 ]
 
-export const AUCTION_ADDRESS = "0x75930c8fd840f1bDa79b17BA33310Fc75FD3CCdb"
+export const AUCTION_ADDRESS = "0x80B96D9FbAD27738BB6dF9411505a50fa4F20602"
 
 export const TOKEN_FACTORY_ADDRESS =
-    "0x2368a43D36bb4054619354F351B0C4510D26b7A1"
+    "0x3671b732117bc9f7bEE704361Ee0E497548dc6DF"
 
 export const AUCTION_ABI = [
     {
         inputs: [],
         stateMutability: "nonpayable",
         type: "constructor",
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: false,
+                internalType: "uint256",
+                name: "_auctionIndex",
+                type: "uint256",
+            },
+            {
+                indexed: false,
+                internalType: "uint256",
+                name: "nftTokenId",
+                type: "uint256",
+            },
+            {
+                indexed: false,
+                internalType: "address",
+                name: "nftAddress",
+                type: "address",
+            },
+            {
+                indexed: false,
+                internalType: "uint256",
+                name: "minBid",
+                type: "uint256",
+            },
+            {
+                indexed: false,
+                internalType: "uint256",
+                name: "end",
+                type: "uint256",
+            },
+            {
+                indexed: false,
+                internalType: "uint256",
+                name: "start",
+                type: "uint256",
+            },
+        ],
+        name: "AuctionCreated",
+        type: "event",
     },
     {
         inputs: [
@@ -1080,7 +1123,7 @@ export const AUCTION_ABI = [
             },
             {
                 internalType: "address",
-                name: "nftContractAddress",
+                name: "contractAddress",
                 type: "address",
             },
             {
@@ -1108,11 +1151,6 @@ export const AUCTION_ABI = [
                 name: "nftOwner",
                 type: "address",
             },
-            {
-                internalType: "contract INftContract",
-                name: "nftContract",
-                type: "address",
-            },
         ],
         stateMutability: "view",
         type: "function",
@@ -1128,6 +1166,40 @@ export const AUCTION_ABI = [
             },
         ],
         stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "address",
+                name: "",
+                type: "address",
+            },
+            {
+                internalType: "address",
+                name: "",
+                type: "address",
+            },
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+            {
+                internalType: "bytes",
+                name: "",
+                type: "bytes",
+            },
+        ],
+        name: "onERC721Received",
+        outputs: [
+            {
+                internalType: "bytes4",
+                name: "",
+                type: "bytes4",
+            },
+        ],
+        stateMutability: "nonpayable",
         type: "function",
     },
     {
@@ -1163,6 +1235,31 @@ export const AUCTION_ABI = [
 ]
 
 export const TOKEN_FACTORY_ABI = [
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: false,
+                internalType: "string",
+                name: "_name",
+                type: "string",
+            },
+            {
+                indexed: false,
+                internalType: "string",
+                name: "_symbol",
+                type: "string",
+            },
+            {
+                indexed: false,
+                internalType: "address",
+                name: "owner",
+                type: "address",
+            },
+        ],
+        name: "TokenCreated",
+        type: "event",
+    },
     {
         inputs: [
             {
@@ -1230,6 +1327,19 @@ export const TOKEN_FACTORY_ABI = [
     {
         inputs: [
             {
+                internalType: "address",
+                name: "operator",
+                type: "address",
+            },
+        ],
+        name: "_setAprroveForAll",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
                 internalType: "string",
                 name: "name",
                 type: "string",
@@ -1248,51 +1358,6 @@ export const TOKEN_FACTORY_ABI = [
         name: "createNewToken",
         outputs: [],
         stateMutability: "nonpayable",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "getName",
-        outputs: [
-            {
-                internalType: "string",
-                name: "",
-                type: "string",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [
-            {
-                internalType: "uint256",
-                name: "tokenId",
-                type: "uint256",
-            },
-        ],
-        name: "getOwner",
-        outputs: [
-            {
-                internalType: "address",
-                name: "",
-                type: "address",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "getSymbol",
-        outputs: [
-            {
-                internalType: "string",
-                name: "",
-                type: "string",
-            },
-        ],
-        stateMutability: "view",
         type: "function",
     },
     {
@@ -1336,6 +1401,19 @@ export const TOKEN_FACTORY_ABI = [
             },
         ],
         name: "indexArry",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "tokenAddressIndex",
         outputs: [
             {
                 internalType: "uint256",
